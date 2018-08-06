@@ -79,6 +79,8 @@ export default {
 
 ## 用法
 
+如果不希望每次使用组件时都显式传入upload prop，则可以在全局注册组件前，通过Vue.use方式安装组件，给use传第二个参数，或者直接赋值window.ElSingleUploadOptions，数据结构要求{upload:foo}。upload是上传接口方法，这样后面多处使用该组件实例时就不需要显式传入upload prop了。
+
 ### internal vue element-ui 方式
 
 `npm i vue element-ui @panhezeng/el-single-upload -S`
@@ -113,7 +115,7 @@ export default {
     import Vue from 'vue'
     import ElSingleUpload from '@panhezeng/el-single-upload'
 
-    Vue.use(ElSingleUpload)
+    Vue.use(ElSingleUpload(), {upload: upload})
 </script>
 ```
 
@@ -129,11 +131,15 @@ export default {
 
 ```javascript
 // auto install
-import '@panhezeng/el-single-upload'
+  window.ElSingleUploadOptions = {upload: upload}
+  require('@panhezeng/el-single-upload')
 ```
 or 
 ```html
 <!--auto install-->
+<script>
+window.ElSingleUploadOptions = {upload: upload}
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@panhezeng/el-single-upload@latest/dist/el-single-upload.min.js"></script>
 ```
 
