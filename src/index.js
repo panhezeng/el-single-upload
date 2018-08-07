@@ -2,7 +2,7 @@ export const ElSingleUpload = require('./ElSingleUpload.vue').default
 
 let Vue
 
-function install (_Vue, options = window.ElSingleUploadOptions) {
+function install (_Vue, options = window&&window.ElSingleUploadOptions) {
 
   if (Vue) {
     console.warn('[ElSingleUpload] already installed. Vue.use(ElSingleUpload) should be called only once.')

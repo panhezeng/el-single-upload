@@ -9,9 +9,9 @@ module.exports = {
     libraryExport: 'ElSingleUpload'
   },
   externals: {
-    'vue': 'Vue',
     '@panhezeng/utils/dist/check-upload.js': '@panhezeng/utils/dist/check-upload.js',
     '@panhezeng/el-popover-dialog': '@panhezeng/el-popover-dialog',
+    'vue': 'Vue',
     'element-ui': {
       commonjs: 'element-ui',
       commonjs2: 'element-ui',
