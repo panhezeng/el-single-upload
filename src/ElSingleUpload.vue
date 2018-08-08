@@ -112,11 +112,12 @@
         // 如果地址有效则赋值，否则重置为空
         let checkUrl = Object.prototype.toString.call(val) === '[object String]'
         if (checkUrl) {
-          if (this.type === 'image') {
-            checkUrl = /^https?:\/\/.*\.(png|jpe?g|gif|svg|webp)(\?.*)?$/i.test(val)
-          } else if (this.type === 'audio' || this.type === 'video') {
-            checkUrl = /^https?:\/\/.*\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/i.test(val)
-          }
+          checkUrl = /^https?:\/\//i.test(val)
+//          if (this.type === 'image') {
+//            checkUrl = /^https?:\/\/.*\.(png|jpe?g|gif|svg|webp)(\?.*)?$/i.test(val)
+//          } else if (this.type === 'audio' || this.type === 'video') {
+//            checkUrl = /^https?:\/\/.*\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/i.test(val)
+//          }
         }
         if (checkUrl) {
           this.urlInternal = val

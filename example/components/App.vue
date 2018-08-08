@@ -12,7 +12,7 @@
   //    import ElSingleUpload from '../../dist/el-single-upload.min.js'
   //    const ElSingleUpload = require('../../dist/el-single-upload.min.js')
 
-  const ufile = new UCloudUFile('example-ucloud', 'https://easy-mock.com/mock/5ae1806b6ad7b17bb7d2cb58/element-ui-plus/upload/example', 'https://easy-mock.com/mock/5ae1806b6ad7b17bb7d2cb58/element-ui-plus/upload/token')
+  const ufile = new UCloudUFile('example-ucloud', 'http://private-87040-publicexample.apiary-mock.com/upload', 'http://private-87040-publicexample.apiary-mock.com/upload/token')
 
   function upload (option) {
     const file = option.file

@@ -6,6 +6,8 @@
 
 示例代码目录 /example
 
+示例使用的mock接口服务可能会出现无响应等错误
+
 ## 说明
 
 基于element-ui的el-upload组件的进一步封装，功能更单一，就是上传单个文件，增加常用功能，比如，检查校验，预览，删除，编辑等
@@ -13,6 +15,8 @@
 首先请按element-ui官方文档安装element-ui，确保能正常使用element-ui
 
 修改了output方式，通过require或window方式使用，不需要加.default
+
+
 
 ```vue
 <script>
