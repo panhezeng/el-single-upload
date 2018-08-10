@@ -6,7 +6,7 @@
 
 示例代码目录 /example
 
-示例使用的apiary mock服务每次Request获得的Response都是不变的。免费服务可能会出现无响应等错误
+示例使用的apiary mock服务每次Request获得的Response都是不变的。免费服务可能会出现无响应等错误。免费又稳定，限制少，支持https的mock也就apiary。getsandbox也不错就是每个月限制5000次请求。
 
 ## 说明
 
@@ -15,7 +15,6 @@
 首先请按element-ui官方文档安装element-ui，确保能正常使用element-ui
 
 修改了output方式，通过require或window方式使用，不需要加.default
-
 
 
 ```vue
@@ -84,6 +83,7 @@ export default {
 ## 用法
 
 如果不希望每次使用组件时都显式传入upload prop，则可以在全局注册组件前，通过Vue.use方式安装组件，给use传第二个参数，或者直接赋值window.ElSingleUploadOptions，数据结构要求{upload:foo}。upload是上传接口方法，这样后面多处使用该组件实例时就不需要显式传入upload prop了。
+还有一种方法，就是再包一层，在包裹js里，直接修改此组件的props，其他地方使用修改后的组件
 
 ### internal vue element-ui 方式
 
@@ -119,7 +119,7 @@ export default {
     import Vue from 'vue'
     import ElSingleUpload from '@panhezeng/el-single-upload'
 
-    Vue.use(ElSingleUpload(), {upload: upload})
+    Vue.use(ElSingleUpload, {upload: upload})
 </script>
 ```
 

@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <h1>mock演示，response永远是一样的数据</h1>
     <!--<el-single-upload :url.sync="url" :upload="upload"/>-->
     <el-single-upload :url.sync="url"/>
   </div>
@@ -70,8 +71,6 @@
   window.ElSingleUploadOptions = {upload: upload}
   require('../../dist/el-single-upload.min.js')
 
-//  Vue.use(ElSingleUpload(), {upload: upload})
-
   //  const ElSingleUpload = () => {
   //    return import('../../dist/el-single-upload.min.js').then(res => {
   //      Object.assign(res.props.upload, {
@@ -81,6 +80,8 @@
   //      return Promise.resolve(res)
   //    })
   //  }
+
+  //  Vue.use(ElSingleUpload(), {upload: upload})
 
   export default {
     name: 'App',
