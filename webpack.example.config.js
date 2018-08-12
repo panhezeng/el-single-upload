@@ -67,7 +67,7 @@ const config = {
 module.exports = (env, argv) => {
 
   if (argv.mode === 'production') {
-    config.plugins.push(new BeforeRunWebpackPlugin())
+    config.plugins.push(new BeforeRunWebpackPlugin({sed: 'vue'}))
   }
 
   return config

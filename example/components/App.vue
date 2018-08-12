@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <h1>mock演示，response永远是一样的数据</h1>
+    <h1>上传的mock演示，response永远是一样的数据</h1>
     <!--<el-single-upload :url.sync="url" :upload="upload"/>-->
     <el-single-upload :url.sync="url"/>
   </div>
