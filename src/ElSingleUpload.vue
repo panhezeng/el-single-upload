@@ -3,7 +3,8 @@
     <template class="view-box" v-if="urlInternal">
       <video ref="media" class="view" controls :src="urlInternal" v-if="type==='video'"></video>
       <audio ref="media" class="view" controls :src="urlInternal" v-else-if="type==='audio'"></audio>
-      <a :href="urlInternal" target="_blank" class="view" v-else><img class="img" :src="urlInternal"/></a>
+      <a :href="urlInternal" target="_blank" class="view" v-else><img class="img" :src="urlInternal"
+                                                                      v-if="type==='image'"/><span style="display:inline-block;padding: 10px 15px;" v-else>{{rawFile?rawFile.name:urlInternal}}</span></a>
     </template>
     <el-progress :percentage="percentage" v-if="percentage!==100"/>
     <el-upload class="upload" :class="{update:urlInternal}" ref="upload"
@@ -14,7 +15,7 @@
                :on-progress="progressUpload"
                :on-success="successUpload"
                :on-error="errorUpload"
-               :accept="`${type}/*`"
+               :accept="type&&`${type}/*`"
                :disabled="disabled"
                :show-file-list="false"
     >
@@ -73,7 +74,7 @@
       // 上传文件类型
       type: {
         validator (value) {
-          return ['image', 'audio', 'video'].includes(value)
+          return ['image', 'audio', 'video', 'text', 'application', ''].includes(value)
         },
         default: 'image'
       },
@@ -97,6 +98,7 @@
     },
     data () {
       return {
+        rawFile: null,
         urlInternal: '',
         percentage: 100
       }
@@ -134,6 +136,7 @@
             }
           })
         } else {
+          this.rawFile = null
           this.urlInternal = ''
           if (this.$refs.upload) this.$refs.upload.clearFiles()
           this.$emit('media-duration', '')
@@ -144,6 +147,7 @@
         }
       },
       async beforeUpload (rawFile) {
+        this.rawFile = rawFile
         const result = checkUpload(rawFile, this.type, this.size)
         if (this.checkUpload) {
           return await this.checkUpload(rawFile, result)
@@ -186,8 +190,8 @@
 <style lang="less">
   .el-single-upload {
     position: relative;
-    width: 200px;
-    height: 200px;
+    width: 300px;
+    height: 90px;
     display: inline-block;
 
     .view {
@@ -290,17 +294,14 @@
       text-align: center;
     }
 
-    &.image {
+    &.image, &.video {
+      width: 200px;
+      height: 200px;
       .img {
         width: 100%;
         height: 100%;
         object-fit: contain;
       }
-    }
-
-    &.audio {
-      width: 300px;
-      height: 90px;
     }
 
   }
