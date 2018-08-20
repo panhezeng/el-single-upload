@@ -146,11 +146,11 @@
           this.$emit('update:url', this.urlInternal)
         }
       },
-      async beforeUpload (rawFile) {
+      beforeUpload (rawFile) {
         this.rawFile = rawFile
         const result = checkUpload(rawFile, this.type, this.size)
         if (this.checkUpload) {
-          return await this.checkUpload(rawFile, result)
+          return this.checkUpload(rawFile, result)
         } else {
           if (result.message) Message.error(result.message)
           return result.validate
