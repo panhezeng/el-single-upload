@@ -216,6 +216,20 @@
       line-height: 1;
     }
 
+    .el-upload-dragger {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: none;
+
+      .el-icon-upload {
+        margin: 0;
+        line-height: normal;
+      }
+    }
+
     &.input {
       .view {
         height: calc(100% - 40px);
