@@ -4,11 +4,13 @@
       <video ref="media" class="view" controls :src="urlInternal" v-if="type==='video'"></video>
       <audio ref="media" class="view" controls :src="urlInternal" v-else-if="type==='audio'"></audio>
       <a :href="urlInternal" target="_blank" class="view" v-else><img class="img" :src="urlInternal"
-                                                                      v-if="type==='image'"/><span style="display:inline-block;padding: 10px 15px;" v-else>{{rawFile?rawFile.name:urlInternal}}</span></a>
+                                                                      v-if="type==='image'"/><span
+        style="display:inline-block;padding: 10px 15px;" v-else>{{rawFile?rawFile.name:urlInternal}}</span></a>
     </template>
     <el-progress :percentage="percentage" v-if="percentage!==100"/>
     <el-upload class="upload" :class="{update:urlInternal}" ref="upload"
                action=""
+               :drag="drag"
                :data="data"
                :before-upload="beforeUpload"
                :http-request="requestUpload"
@@ -92,6 +94,10 @@
       readonly: {
         type: Boolean,
         default: false
+      },
+      drag: {
+        type: Boolean,
+        default: true
       },
       // 组件下方显示的提示文本内容
       tip: String
