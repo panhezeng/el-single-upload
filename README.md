@@ -30,7 +30,7 @@ export default {
         required: true,
         type: Function
       },
-      // 上传前检查方法，第一个参数是上传文件数据，第二个参数是内部检查结果，方法必须返回布尔值，支持async方法，不是必须，默认走内部checkUpload逻辑
+      // 上传前检查方法，第一个参数是上传文件数据，第二个参数是内部检查结果，方法必须返回布尔值，不是必须，默认走内部checkUpload逻辑
       checkUpload: Function,
       // 上传结果错误处理，不是必须，默认走内部错误逻辑
       error: Function,

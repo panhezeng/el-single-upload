@@ -16,10 +16,9 @@
                :on-success="successUpload"
                :on-error="errorUpload"
                :accept="type&&`${type}/*`"
-               :disabled="disabled"
                :drag="drag"
-               :show-file-list="false"
                :multiple="false"
+               :show-file-list="false"
     >
       <i class="re-upload-btn el-icon-upload" v-if="urlInternal && !disabled"></i>
       <i class="upload-btn el-icon-upload" v-else-if="!disabled"></i>
@@ -53,7 +52,7 @@
         required: true,
         type: Function
       },
-      // 上传前检查方法，第一个参数是上传文件数据，第二个参数是内部检查结果，方法必须返回布尔值，支持async方法，不是必须，默认走内部checkUpload逻辑
+      // 上传前检查方法，第一个参数是上传文件数据，第二个参数是内部检查结果，方法必须返回布尔值，不是必须，默认走内部checkUpload逻辑
       checkUpload: Function,
       // 上传结果错误处理，不是必须，默认走内部错误逻辑
       error: Function,
@@ -73,11 +72,6 @@
           return ['image', 'audio', 'video', 'text', 'application', ''].includes(value)
         },
         default: 'image'
-      },
-      // 禁用，只能看
-      disabled: {
-        type: Boolean,
-        default: false
       },
       // 是否显示文件url的文本框，用于编辑复制粘贴等需求
       input: {
