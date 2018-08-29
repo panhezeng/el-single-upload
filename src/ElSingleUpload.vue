@@ -8,10 +8,8 @@
         style="display:inline-block;padding: 10px 15px;" v-else>{{rawFile?rawFile.name:urlInternal}}</span></a>
     </template>
     <el-progress :percentage="percentage" v-if="percentage!==100"/>
-    <el-upload class="upload" :class="{update:urlInternal}" ref="upload"
+    <el-upload class="upload" :class="{update:urlInternal}" ref="upload" v-bind="$attrs"
                action=""
-               :drag="drag"
-               :data="data"
                :before-upload="beforeUpload"
                :http-request="requestUpload"
                :on-progress="progressUpload"
@@ -19,7 +17,9 @@
                :on-error="errorUpload"
                :accept="type&&`${type}/*`"
                :disabled="disabled"
+               :drag="drag"
                :show-file-list="false"
+               :multiple="false"
     >
       <i class="re-upload-btn el-icon-upload" v-if="urlInternal && !disabled"></i>
       <i class="upload-btn el-icon-upload" v-else-if="!disabled"></i>
@@ -42,6 +42,7 @@
   export default {
     name: 'ElSingleUpload',
     components: {'el-progress': Progress, 'el-upload': Upload, 'el-input': Input, ElPopoverDialog},
+    inheritAttrs: false,
     props: {
       // 上传文件预览地址
       url: {
@@ -56,13 +57,6 @@
       checkUpload: Function,
       // 上传结果错误处理，不是必须，默认走内部错误逻辑
       error: Function,
-      // 上传方法附加数据，el-upload组件的data属性
-      data: {
-        type: Object,
-        default () {
-          return {}
-        }
-      },
       // 是否需要删除功能
       del: {
         type: Boolean,

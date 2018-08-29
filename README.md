@@ -73,6 +73,11 @@ export default {
         type: Boolean,
         default: false
       },
+      // 拖拽上传
+      drag: {
+        type: Boolean,
+        default: true
+      },
       // 组件下方显示的提示文本内容
       tip: String
     },
