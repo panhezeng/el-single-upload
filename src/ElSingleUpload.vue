@@ -95,6 +95,7 @@
         type: Boolean,
         default: false
       },
+      // 拖拽上传
       drag: {
         type: Boolean,
         default: true
