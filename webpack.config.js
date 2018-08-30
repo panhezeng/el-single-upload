@@ -10,6 +10,7 @@ module.exports = {
   },
   externals: {
     '@panhezeng/utils/dist/check-upload.js': '@panhezeng/utils/dist/check-upload.js',
+    '@panhezeng/utils/dist/get-object-item-by-path.js': '@panhezeng/utils/dist/get-object-item-by-path.js',
     '@panhezeng/el-popover-dialog': '@panhezeng/el-popover-dialog',
     'vue': 'Vue',
     'element-ui': {

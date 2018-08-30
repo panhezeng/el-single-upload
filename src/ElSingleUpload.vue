@@ -5,7 +5,7 @@
       <audio ref="media" class="view" controls :src="urlInternal" v-else-if="type==='audio'"></audio>
       <a :href="urlInternal" target="_blank" class="view" v-else><img class="img" :src="urlInternal"
                                                                       v-if="type==='image'"/><span
-        style="display:inline-block;padding: 10px 15px;" v-else>{{rawFile?rawFile.name:urlInternal}}</span></a>
+        style="display:inline-block;padding: 10px 15px;" v-else>{{file?file.name:urlInternal}}</span></a>
     </template>
     <el-progress :percentage="percentage" v-if="percentage!==100"/>
     <el-upload class="upload" :class="{update:urlInternal}" ref="upload" v-bind="$attrs"
@@ -36,6 +36,7 @@
 <script>
   import { Progress, Upload, Input, Message } from 'element-ui'
   import checkUpload from '@panhezeng/utils/dist/check-upload.js'
+  import getObjectItemByPath from '@panhezeng/utils/dist/get-object-item-by-path.js'
   import ElPopoverDialog from '@panhezeng/el-popover-dialog'
 
   export default {
@@ -43,14 +44,19 @@
     components: {'el-progress': Progress, 'el-upload': Upload, 'el-input': Input, ElPopoverDialog},
     inheritAttrs: false,
     props: {
-      // 上传文件预览地址
-      url: {
-        required: true
-      },
       // 上传文件的方法
       upload: {
         required: true,
         type: Function
+      },
+      // 从上传方法返回对象中获取url的path
+      resPathOfUrl: {
+        type: String,
+        default: 'data.url'
+      },
+      // 上传文件预览地址
+      url: {
+        required: true
       },
       // 上传前检查方法，第一个参数是上传文件数据，第二个参数是内部检查结果，方法必须返回布尔值，不是必须，默认走内部checkUpload逻辑
       checkUpload: Function,
@@ -93,7 +99,7 @@
     },
     data () {
       return {
-        rawFile: null,
+        file: null,
         urlInternal: '',
         percentage: 100
       }
@@ -131,7 +137,7 @@
             }
           })
         } else {
-          this.rawFile = null
+          this.file = null
           this.urlInternal = ''
           if (this.$refs.upload) this.$refs.upload.clearFiles()
           this.$emit('media-duration', '')
@@ -141,11 +147,11 @@
           this.$emit('update:url', this.urlInternal)
         }
       },
-      beforeUpload (rawFile) {
-        this.rawFile = rawFile
-        const result = checkUpload(rawFile, this.type, this.size)
+      beforeUpload (file) {
+        this.file = file
+        const result = checkUpload(file, this.type, this.size)
         if (this.checkUpload) {
-          return this.checkUpload(rawFile, result)
+          return this.checkUpload(file, result)
         } else {
           if (result.message) Message.error(result.message)
           return result.validate
@@ -155,23 +161,21 @@
         console.log('option.data', option.data)
         return this.upload(option)
       },
-      progressUpload (event, rawFile) {
-        console.log('event, file', event, rawFile)
+      progressUpload (event, file) {
+        console.log('event, file', event, file)
         let percentage = parseInt(event.percent)
         if (percentage >= 100) percentage = 99
         this.percentage = percentage
       },
-      successUpload (uploadData, rawFile) {
-        console.log('uploadData', uploadData)
-        if (uploadData && uploadData.data && uploadData.data.url) {
-          this.setUrl(uploadData.data.url)
-        }
+      successUpload (response) {
+        console.log('response', response)
+        this.setUrl(getObjectItemByPath(response, this.resPathOfUrl))
         this.percentage = 100
       },
-      errorUpload (err, rawFile) {
+      errorUpload (err, file) {
         this.percentage = 100
         if (this.error) {
-          this.error(err, rawFile)
+          this.error(err, file)
         } else {
           Message.error('上传失败')
         }

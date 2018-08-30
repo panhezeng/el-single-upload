@@ -62,6 +62,7 @@
 //          }
 //          var percentComplete = (res.value * 100) + '%'
         res.percent = res.value * 100
+        option.onProgress(res)
       }
 
       ufile.hitSliceUpload(file, success, error, progress)
