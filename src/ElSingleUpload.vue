@@ -20,15 +20,15 @@
                :multiple="false"
                :show-file-list="false"
     >
-      <i class="re-upload-btn el-icon-upload" v-if="urlInternal && !disabled"></i>
-      <i class="upload-btn el-icon-upload" v-else-if="!disabled"></i>
+      <i class="re-upload-btn el-icon-upload" v-if="urlInternal && !$attrs.disabled"></i>
+      <i class="upload-btn el-icon-upload" v-else-if="!$attrs.disabled"></i>
     </el-upload>
     <el-popover-dialog v-bind="$attrs"
                        class="icon-delete" :btn-show="false" @confirm="delConfirm"
-                       v-if="urlInternal && del && !disabled">
+                       v-if="urlInternal && del && !$attrs.disabled">
       <i class="el-icon-delete" slot="reference"></i>
     </el-popover-dialog>
-    <el-input v-model="urlInternal" @blur="setUrl(urlInternal)" :disabled="disabled" :readonly="readonly" v-if="input"/>
+    <el-input v-model="urlInternal" @blur="setUrl(urlInternal)" :disabled="$attrs.disabled" :readonly="readonly" v-if="input"/>
     <div class="tip" v-if="tip">{{tip}}</div>
     <slot/>
   </div>
