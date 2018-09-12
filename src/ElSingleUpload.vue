@@ -28,7 +28,7 @@
                        v-if="urlInternal && del && !$attrs.disabled">
       <i class="el-icon-delete" slot="reference"></i>
     </el-popover-dialog>
-    <el-input v-model="urlInternal" @blur="setUrl(urlInternal)" :disabled="$attrs.disabled" :readonly="readonly" v-if="input"/>
+    <el-input :placeholder="$attrs.placeholder||'文件链接地址'" v-model="urlInternal" @blur="setUrl(urlInternal)" :disabled="$attrs.disabled" :readonly="readonly" v-if="input"/>
     <div class="tip" v-if="tip">{{tip}}</div>
     <slot/>
   </div>
