@@ -8,7 +8,7 @@
         style="display:inline-block;padding: 10px 15px;" v-else>{{file?file.name:urlInternal}}</span></a>
     </template>
     <el-progress :percentage="percentage" v-if="percentage!==100"/>
-    <el-upload class="upload" :class="{update:urlInternal}" ref="upload" v-bind="$attrs"
+    <el-upload class="upload" :class="{update:urlInternal}" ref="upload" v-bind="$attrs" v-if="!$attrs.disabled"
                action=""
                :before-upload="beforeUpload"
                :http-request="requestUpload"
@@ -20,15 +20,16 @@
                :multiple="false"
                :show-file-list="false"
     >
-      <i class="re-upload-btn el-icon-upload" v-if="urlInternal && !$attrs.disabled"></i>
-      <i class="upload-btn el-icon-upload" v-else-if="!$attrs.disabled"></i>
+      <i class="re-upload-btn el-icon-upload" v-if="urlInternal"></i>
+      <i class="upload-btn el-icon-upload" v-else></i>
     </el-upload>
     <el-popover-dialog v-bind="$attrs"
                        class="icon-delete" :btn-show="false" @confirm="delConfirm"
                        v-if="urlInternal && del && !$attrs.disabled">
       <i class="el-icon-delete" slot="reference"></i>
     </el-popover-dialog>
-    <el-input :placeholder="$attrs.placeholder||'文件链接地址'" v-model="urlInternal" @blur="setUrl(urlInternal)" :disabled="$attrs.disabled" :readonly="readonly" v-if="input"/>
+    <el-input :placeholder="$attrs.placeholder||'文件链接地址'" v-model="urlInternal" @blur="setUrl(urlInternal)"
+              :disabled="$attrs.disabled" :readonly="readonly" v-if="input"/>
     <div class="tip" v-if="tip">{{tip}}</div>
     <slot/>
   </div>
