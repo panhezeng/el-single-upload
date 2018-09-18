@@ -15,7 +15,7 @@
                :on-progress="progressUpload"
                :on-success="successUpload"
                :on-error="errorUpload"
-               :accept="type&&`${type}/*`"
+               :accept="accept"
                :drag="drag"
                :multiple="false"
                :show-file-list="false"
@@ -76,7 +76,7 @@
       // 上传文件类型
       type: {
         validator (value) {
-          return ['image', 'audio', 'video', 'text', 'application', ''].includes(value)
+          return value === '' || /^(image|audio|video|text|application)/.test(value)
         },
         default: 'image'
       },
@@ -109,6 +109,15 @@
       url: {
         immediate: true,
         handler (val, oldVal) { this.setUrl(val) }
+      }
+    },
+    computed: {
+      accept () {
+        if (this.type === '' || String(this.type).includes('/')) {
+          return this.type
+        } else {
+          return `${this.type}/*`
+        }
       }
     },
     methods: {

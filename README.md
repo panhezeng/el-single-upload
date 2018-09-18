@@ -21,59 +21,59 @@
 <script>
 export default {
    props: {
-      // 上传文件的方法
-      upload: {
-        required: true,
-        type: Function
-      },
-      // 从上传方法返回对象中获取url的path
-      resPathOfUrl: {
-        type: String,
-        default: 'data.url'
-      },
-      // 上传文件预览地址
-      url: {
-        required: true
-      },
-      // 上传前检查方法，第一个参数是上传文件数据，第二个参数是内部检查结果，方法必须返回布尔值，不是必须，默认走内部checkUpload逻辑
-      checkUpload: Function,
-      // 上传结果错误处理，不是必须，默认走内部错误逻辑
-      error: Function,
-      // 是否需要删除功能
-      del: {
-        type: Boolean,
-        default: true
-      },
-      // 限制大小，单位KB
-      size: {
-        type: Number,
-        default: 2048
-      },
-      // 上传文件类型
-      type: {
-        validator (value) {
-          return ['image', 'audio', 'video', 'text', 'application', ''].includes(value)
-        },
-        default: 'image'
-      },
-      // 是否显示文件url的文本框，用于编辑复制粘贴等需求
-      input: {
-        type: Boolean,
-        default: true
-      },
-      // 是否只读，如果只读，只能选择复制文件url地址，不能编辑
-      readonly: {
-        type: Boolean,
-        default: false
-      },
-      // 拖拽上传
-      drag: {
-        type: Boolean,
-        default: true
-      },
-      // 组件下方显示的提示文本内容
-      tip: String
-    },
+         // 上传文件的方法
+         upload: {
+           required: true,
+           type: Function
+         },
+         // 从上传方法返回对象中获取url的path
+         resPathOfUrl: {
+           type: String,
+           default: 'data.url'
+         },
+         // 上传文件预览地址
+         url: {
+           required: true
+         },
+         // 上传前检查方法，第一个参数是上传文件数据，第二个参数是内部检查结果，方法必须返回布尔值，不是必须，默认走内部checkUpload逻辑
+         checkUpload: Function,
+         // 上传结果错误处理，不是必须，默认走内部错误逻辑
+         error: Function,
+         // 是否需要删除功能
+         del: {
+           type: Boolean,
+           default: true
+         },
+         // 限制大小，单位KB
+         size: {
+           type: Number,
+           default: 2048
+         },
+         // 上传文件类型
+         type: {
+           validator (value) {
+             return value === '' || /^(image|audio|video|text|application)/.test(value)
+           },
+           default: 'image'
+         },
+         // 是否显示文件url的文本框，用于编辑复制粘贴等需求
+         input: {
+           type: Boolean,
+           default: true
+         },
+         // 是否只读，如果只读，只能选择复制文件url地址，不能编辑
+         readonly: {
+           type: Boolean,
+           default: false
+         },
+         // 拖拽上传
+         drag: {
+           type: Boolean,
+           default: true
+         },
+         // 组件下方显示的提示文本内容
+         tip: String
+       },
 }
 </script>
 ```
