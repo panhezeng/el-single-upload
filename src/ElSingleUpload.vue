@@ -138,7 +138,7 @@
             if (this.$refs.media) {
               this.$refs.media.addEventListener('loadedmetadata', event => {
                 this.$emit('media-duration', this.$refs.media.duration)
-                console.log(this.$refs.media.duration)
+//                console.log(this.$refs.media.duration)
               }, true)
               this.$refs.media.addEventListener('error', event => {
                 this.$emit('media-load-error', event)
@@ -168,17 +168,17 @@
         }
       },
       requestUpload (option) {
-        console.log('option.data', option.data)
+//        console.log('option.data', option.data)
         return this.upload(option)
       },
       progressUpload (event, file) {
-        console.log('event, file', event, file)
+//        console.log('event, file', event, file)
         let percentage = parseInt(event.percent)
         if (percentage >= 100) percentage = 99
         this.percentage = percentage
       },
       successUpload (response) {
-        console.log('response', response)
+//        console.log('response', response)
         this.setUrl(getObjectItemByPath(response, this.resPathOfUrl))
         this.percentage = 100
       },
