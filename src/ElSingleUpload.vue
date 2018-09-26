@@ -183,6 +183,7 @@
         this.setUrl(getObjectItemByPath(response, this.resPathOfUrl))
         this.percentage = 100
         this.$emit('success-upload', response)
+        this.$emit('finish-upload')
       },
       errorUpload (err, file) {
         this.percentage = 100
@@ -192,6 +193,7 @@
           Message.error('上传失败')
         }
         this.$emit('error-upload', {err, file})
+        this.$emit('finish-upload')
       },
       delConfirm () {
         this.setUrl()
