@@ -168,6 +168,7 @@
         }
       },
       requestUpload (option) {
+        this.$emit('request-upload', option)
 //        console.log('option.data', option.data)
         return this.upload(option)
       },
@@ -181,6 +182,7 @@
 //        console.log('response', response)
         this.setUrl(getObjectItemByPath(response, this.resPathOfUrl))
         this.percentage = 100
+        this.$emit('success-upload', response)
       },
       errorUpload (err, file) {
         this.percentage = 100
@@ -189,6 +191,7 @@
         } else {
           Message.error('上传失败')
         }
+        this.$emit('error-upload', {err, file})
       },
       delConfirm () {
         this.setUrl()
