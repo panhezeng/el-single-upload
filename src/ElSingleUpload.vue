@@ -234,7 +234,7 @@
 
       .el-icon-upload {
         font-size: 24px;
-        margin: 0;
+        margin: 0 0 0 2px;
         line-height: normal;
       }
     }
@@ -270,7 +270,7 @@
     .upload.update {
       position: absolute;
       top: 0;
-      right: -26px;
+      right: -28px;
       z-index: 2;
       width: auto;
       height: auto;
@@ -304,7 +304,7 @@
     .icon-delete {
       position: absolute;
       top: 28px;
-      right: -26px;
+      right: -28px;
       font-size: 24px;
       cursor: pointer;
       color: #8c939d;
@@ -315,6 +315,9 @@
       &:hover {
         border-color: #20a0ff;
         color: #20a0ff;
+      }
+      .el-icon-delete{
+        margin-left: 2px;
       }
     }
 

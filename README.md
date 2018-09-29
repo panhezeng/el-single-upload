@@ -16,7 +16,7 @@
 
 修改了output方式，通过require或window方式使用，不需要加.default
 
-事件 this.$emit('request-upload', option)  this.$emit('error-upload', {err, file}) this.$emit('finish-upload')
+事件 this.$emit('request-upload', option)  this.$emit('success-upload', response) this.$emit('error-upload', {err, file}) this.$emit('finish-upload')
 
 
 ```vue
