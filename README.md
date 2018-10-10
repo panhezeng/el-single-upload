@@ -46,6 +46,11 @@ export default {
            type: Boolean,
            default: true
          },
+        // 是否需要预览功能
+        view: {
+          type: Boolean,
+          default: true
+        },         
          // 限制大小，单位KB
          size: {
            type: Number,

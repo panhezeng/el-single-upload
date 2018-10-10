@@ -1,6 +1,6 @@
 <template>
   <div class="el-single-upload" :class="{[type]:true, 'input':input}">
-    <template class="view-box" v-if="urlInternal">
+    <template class="view-box" v-if="view&&urlInternal">
       <video ref="media" class="view" controls :src="urlInternal" v-if="type==='video'"></video>
       <audio ref="media" class="view" controls :src="urlInternal" v-else-if="type==='audio'"></audio>
       <a :href="urlInternal" target="_blank" class="view" v-else><img class="img" :src="urlInternal"
@@ -42,7 +42,7 @@
 
   export default {
     name: 'ElSingleUpload',
-    components: {'el-progress': Progress, 'el-upload': Upload, 'el-input': Input, ElPopoverDialog},
+    components: { 'el-progress': Progress, 'el-upload': Upload, 'el-input': Input, ElPopoverDialog },
     inheritAttrs: false,
     props: {
       // 上传文件的方法
@@ -65,6 +65,11 @@
       error: Function,
       // 是否需要删除功能
       del: {
+        type: Boolean,
+        default: true
+      },
+      // 是否需要预览功能
+      view: {
         type: Boolean,
         default: true
       },
@@ -192,7 +197,7 @@
         } else {
           Message.error('上传失败')
         }
-        this.$emit('error-upload', {err, file})
+        this.$emit('error-upload', { err, file })
         this.$emit('finish-upload')
       },
       delConfirm () {
@@ -316,7 +321,7 @@
         border-color: #20a0ff;
         color: #20a0ff;
       }
-      .el-icon-delete{
+      .el-icon-delete {
         margin-left: 2px;
       }
     }
