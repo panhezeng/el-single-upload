@@ -73,10 +73,9 @@
         type: Boolean,
         default: true
       },
-      // 限制大小，单位KB
+      // size 单位KB，默认undefined，文件使用默认限制大小，如果不限制大小则传0
       size: {
-        type: Number,
-        default: 2048
+        type: Number
       },
       // 上传文件类型
       type: {
