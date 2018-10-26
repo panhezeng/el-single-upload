@@ -80,7 +80,7 @@
       // 上传文件类型
       type: {
         validator (value) {
-          return value === '' || /^(image|audio|video|text|application)/.test(value)
+          return value === '' || /^(image|audio|video|text|application|\.)/.test(value)
         },
         default: 'image'
       },
@@ -117,10 +117,10 @@
     },
     computed: {
       accept () {
-        if (this.type === '' || String(this.type).includes('/')) {
-          return this.type
-        } else {
+        if (/^(image|audio|video|text)$/.test(this.type)) {
           return `${this.type}/*`
+        } else {
+          return this.type
         }
       }
     },
