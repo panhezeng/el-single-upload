@@ -6,7 +6,7 @@
     <!--<el-single-upload :url.sync="url" type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"/>-->
     <!--<el-single-upload :url.sync="url" type=".xls, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>-->
     <!--<el-single-upload :url.sync="url" type="audio"/>-->
-    <el-single-upload :url.sync="url" />
+    <el-single-upload :url.sync="url"/>
   </div>
 </template>
 
@@ -27,33 +27,24 @@
 
     return new Promise((resolve, reject) => {
 
-      if (ufile.uploading) {
-        console.log('上传中，稍等')
-        return
-      } else {
-        ufile.uploading = true
-      }
-
-      ufile.PREFIX = `Items/11933/${file.type}`
+      ufile.PREFIX = `example/${file.type}`
 
       const success = (res) => {
         if (Object.prototype.toString.call(res) !== '[object Object]') {
-          res = {Key: file.name}
+          res = { Key: file.name }
         }
-        res.url = `http://digital.hammacher.com/${res.Key}`
-        ufile.uploading = false
+        res.url = `http://dummyimage.com/200x100/50B347/FFF&text=${res.Key}`
         console.log('success', res)
-        resolve({data: res})
+        resolve({ data: res })
       }
 
       const error = (res) => {
-        ufile.uploading = false
         reject(new Error('上传失败'))
       }
 
       const progress = (res) => {
         if (Object.prototype.toString.call(res) !== '[object Object]') {
-          res = {value: 0}
+          res = { value: 0 }
         }
         console.log('progress', res)
 //          var tips = ''
@@ -73,7 +64,7 @@
     })
   }
 
-  window.ElSingleUploadOptions = {upload: upload}
+  window.ElSingleUploadOptions = { upload: upload }
   require('../../dist/el-single-upload.min.js')
 
   //  const ElSingleUpload = () => {
