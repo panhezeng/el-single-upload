@@ -6,7 +6,8 @@
     <!--<el-single-upload :url.sync="url" type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"/>-->
     <!--<el-single-upload :url.sync="url" type=".xls, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>-->
     <!--<el-single-upload :url.sync="url" type="audio"/>-->
-    <el-single-upload :url.sync="url"/>
+    <!--<el-single-upload :url.sync="url" type="image/*"/>-->
+    <el-single-upload :url.sync="url" />
   </div>
 </template>
 

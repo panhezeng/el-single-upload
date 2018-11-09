@@ -1,10 +1,10 @@
 <template>
-  <div class="el-single-upload" :class="{[type]:true, 'input':input}">
+  <div class="el-single-upload" :class="{[typeClassName]:true, 'input':input}">
     <template class="view-box" v-if="view&&urlInternal">
-      <video ref="media" class="view" controls :src="urlInternal" v-if="type==='video'"></video>
-      <audio ref="media" class="view" controls :src="urlInternal" v-else-if="type==='audio'"></audio>
+      <video ref="media" class="view" controls :src="urlInternal" v-if="typeClassName==='video'"></video>
+      <audio ref="media" class="view" controls :src="urlInternal" v-else-if="typeClassName==='audio'"></audio>
       <a :href="urlInternal" target="_blank" class="view" v-else><img class="img" :src="urlInternal"
-                                                                      v-if="type==='image'"/><span
+                                                                      v-if="typeClassName==='image'"/><span
         style="display:inline-block;padding: 10px 15px;" v-else>{{file?file.name:urlInternal}}</span></a>
     </template>
     <el-progress :percentage="percentage" v-if="percentage!==100"/>
@@ -121,6 +121,17 @@
           return `${this.type}/*`
         } else {
           return this.type
+        }
+      },
+      typeClassName () {
+        if (/^\.(png|jpe?g|gif|svg|webp)/.test(this.type) || /^image/.test(this.type)) {
+          return 'image'
+        } else if (/^\.(ogg|mp3|wav|flac|aac)/.test(this.type) || /^audio/.test(this.type)) {
+          return 'audio'
+        } else if (/^\.(mp4|webm)/.test(this.type) || /^video/.test(this.type)) {
+          return 'video'
+        } else {
+          return ''
         }
       }
     },
