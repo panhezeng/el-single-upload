@@ -55,7 +55,7 @@ export default {
       size: {
         type: Number
       },
-      // 上传文件类型
+      // 上传文件类型，和HTML的input元素的accept属性一样，支持用逗号分隔的MIME类型或者.文件后缀名组成的字符串，默认只能传图片，如果传空字符串，则不限制类型
       type: {
         validator (value) {
           return value === '' || /^(image|audio|video|text|application)/.test(value)

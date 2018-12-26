@@ -30,7 +30,7 @@
     "build": "webpack --mode production"
   },
   "dependencies": {
-    "@panhezeng/el-popover-dialog": "latest",
+    "@panhezeng/el-popover-dialog": "^2.0.6",
     "@panhezeng/ucloud-ufile": "latest",
     "@panhezeng/utils": "latest",
     "element-ui": "latest",
