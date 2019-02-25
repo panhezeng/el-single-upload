@@ -1,37 +1,73 @@
 <template>
-  <div class="el-single-upload" :class="{[typeClassName]:true, 'input':input}">
-    <template class="view-box" v-if="view&&urlInternal">
-      <video ref="media" class="view" controls :src="urlInternal" v-if="typeClassName==='video'"></video>
-      <audio ref="media" class="view" controls :src="urlInternal" v-else-if="typeClassName==='audio'"></audio>
-      <a :href="urlInternal" target="_blank" class="view" v-else><img class="img" :src="urlInternal"
-                                                                      v-if="typeClassName==='image'"/><span
-        style="display:inline-block;padding: 10px 15px;" v-else>{{file?file.name:urlInternal}}</span></a>
+  <div
+    class="el-single-upload"
+    :class="{ [typeClassName]: true, input: input }"
+  >
+    <template class="view-box" v-if="view && urlInternal">
+      <video
+        ref="media"
+        class="view"
+        controls
+        :src="urlInternal"
+        v-if="typeClassName === 'video'"
+      ></video>
+      <audio
+        ref="media"
+        class="view"
+        controls
+        :src="urlInternal"
+        v-else-if="typeClassName === 'audio'"
+      ></audio>
+      <a :href="urlInternal" target="_blank" class="view" v-else
+        ><img
+          class="img"
+          :src="urlInternal"
+          v-if="typeClassName === 'image'"
+        /><span style="display:inline-block;padding: 10px 15px;" v-else>{{
+          file ? file.name : urlInternal
+        }}</span></a
+      >
     </template>
-    <el-progress :percentage="percentage" v-if="percentage!==100"/>
-    <el-upload class="upload" :class="{update:urlInternal}" ref="upload" v-bind="$attrs" v-if="!$attrs.disabled"
-               action=""
-               :before-upload="beforeUpload"
-               :http-request="requestUpload"
-               :on-progress="progressUpload"
-               :on-success="successUpload"
-               :on-error="errorUpload"
-               :accept="accept"
-               :drag="drag"
-               :multiple="false"
-               :show-file-list="false"
+    <el-progress :percentage="percentage" v-if="percentage !== 100" />
+    <el-upload
+      class="upload"
+      :class="{ update: urlInternal }"
+      ref="upload"
+      v-bind="$attrs"
+      v-if="!$attrs.disabled"
+      action=""
+      :before-upload="beforeUpload"
+      :http-request="requestUpload"
+      :on-progress="progressUpload"
+      :on-success="successUpload"
+      :on-error="errorUpload"
+      :accept="accept"
+      :drag="drag"
+      :multiple="false"
+      :show-file-list="false"
     >
       <i class="re-upload-btn el-icon-upload" v-if="urlInternal"></i>
       <i class="upload-btn el-icon-upload" v-else></i>
     </el-upload>
-    <el-popover-dialog v-bind="$attrs"
-                       class="icon-delete" :btn-show="false" @confirm="delConfirm"
-                       v-if="urlInternal && del && !$attrs.disabled">
+    <el-popover-dialog
+      v-bind="$attrs"
+      class="icon-delete"
+      :btn-show="false"
+      @confirm="delConfirm"
+      v-if="urlInternal && del && !$attrs.disabled"
+    >
       <i class="el-icon-delete" slot="reference"></i>
     </el-popover-dialog>
-    <el-input :placeholder="$attrs.placeholder||'文件链接地址'" v-model="urlInternal" @blur="setUrl(urlInternal)"
-              :disabled="$attrs.disabled" :readonly="readonly" v-if="input"/>
-    <div class="tip" v-if="tip">{{tip}}</div>
-    <slot/>
+    <el-input
+      :placeholder="$attrs.placeholder || '文件链接地址'"
+      v-model="urlInternal"
+      @blur="setUrl(urlInternal)"
+      :disabled="$attrs.disabled"
+      :readonly="readonly"
+      v-if="input"
+    />
+    <div class="tip" v-if="tip">{{ tip }}</div>
+    <slot />
   </div>
 </template>
 <script>
@@ -213,6 +249,9 @@ export default {
     progressUpload(event, file) {
       //        console.log('event, file', event, file)
       let percentage = parseInt(event.percent);
+      if (Object.prototype.toString.call(event.percent) === "[object Number]") {
+        percentage = event.percent;
+      }
       if (percentage >= 100) percentage = 99;
       this.percentage = percentage;
     },
