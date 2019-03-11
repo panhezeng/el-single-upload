@@ -206,6 +206,7 @@ export default {
               "loadedmetadata",
               event => {
                 this.$emit("media-duration", this.$refs.media.duration);
+                this.$emit("media", this.$refs.media);
                 //                console.log(this.$refs.media.duration)
               },
               true
@@ -222,9 +223,11 @@ export default {
         });
       } else {
         this.file = null;
+        this.$emit("file", this.file);
         this.urlInternal = "";
         if (this.$refs.upload) this.$refs.upload.clearFiles();
         this.$emit("media-duration", "");
+        this.$emit("media", null);
       }
       // 如果内部和外部不一样，则同步地址
       if (this.urlInternal !== this.url) {
@@ -233,6 +236,7 @@ export default {
     },
     beforeUpload(file) {
       this.file = file;
+      this.$emit("file", this.file);
       const result = checkUpload(file, this.type, this.size);
       if (this.checkUpload) {
         return this.checkUpload(file, result);
@@ -269,6 +273,7 @@ export default {
       } else {
         Message.error("上传失败");
       }
+      this.setUrl();
       this.$emit("error-upload", { err, file });
       this.$emit("finish-upload");
     },
