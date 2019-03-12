@@ -1,28 +1,25 @@
 <template>
-  <div
-    class="el-single-upload"
-    :class="{ [typeClassName]: true, input: input }"
-  >
+  <div class="el-single-upload" :class="{ [acceptClassName]: true, input }">
     <template class="view-box" v-if="view && urlInternal">
       <video
         ref="media"
         class="view"
         controls
         :src="urlInternal"
-        v-if="typeClassName === 'video'"
+        v-if="acceptClassName === 'video'"
       ></video>
       <audio
         ref="media"
         class="view"
         controls
         :src="urlInternal"
-        v-else-if="typeClassName === 'audio'"
+        v-else-if="acceptClassName === 'audio'"
       ></audio>
       <a :href="urlInternal" target="_blank" class="view" v-else
         ><img
           class="img"
           :src="urlInternal"
-          v-if="typeClassName === 'image'"
+          v-if="acceptClassName === 'image'"
         /><span style="display:inline-block;padding: 10px 15px;" v-else>{{
           file ? file.name : urlInternal
         }}</span></a
@@ -118,14 +115,14 @@ export default {
     size: {
       type: Number
     },
-    // 上传文件类型，和HTML的input元素的accept属性一样，支持用逗号分隔的MIME类型或者.文件后缀名组成的字符串，默认只能传图片，如果传空字符串，则不限制类型
-    type: {
+    // 和HTML的input元素的accept属性一样，支持用逗号分隔的MIME类型或者.文件后缀名组成的字符串，默认只能传图片，如果传空字符串，则不限制类型
+    accept: {
       validator(value) {
         return (
           value === "" || /^(image|audio|video|text|application|\.)/.test(value)
         );
       },
-      default: "image"
+      default: "image/*"
     },
     // 是否显示文件url的文本框，用于编辑复制粘贴等需求
     input: {
@@ -161,25 +158,21 @@ export default {
     }
   },
   computed: {
-    accept() {
-      if (/^(image|audio|video|text)$/.test(this.type)) {
-        return `${this.type}/*`;
-      } else {
-        return this.type;
-      }
-    },
-    typeClassName() {
+    acceptClassName() {
       if (
-        /^\.(png|jpe?g|gif|svg|webp)/.test(this.type) ||
-        /^image/.test(this.type)
+        /^\.(png|jpe?g|gif|svg|webp)/.test(this.accept) ||
+        /^image/.test(this.accept)
       ) {
         return "image";
       } else if (
-        /^\.(ogg|mp3|wav|flac|aac)/.test(this.type) ||
-        /^audio/.test(this.type)
+        /^\.(ogg|mp3|wav|flac|aac)/.test(this.accept) ||
+        /^audio/.test(this.accept)
       ) {
         return "audio";
-      } else if (/^\.(mp4|webm)/.test(this.type) || /^video/.test(this.type)) {
+      } else if (
+        /^\.(mp4|webm)/.test(this.accept) ||
+        /^video/.test(this.accept)
+      ) {
         return "video";
       } else {
         return "";
@@ -192,11 +185,6 @@ export default {
       let checkUrl = Object.prototype.toString.call(val) === "[object String]";
       if (checkUrl) {
         checkUrl = /^https?:\/\//i.test(val);
-        //          if (this.type === 'image') {
-        //            checkUrl = /^https?:\/\/.*\.(png|jpe?g|gif|svg|webp)(\?.*)?$/i.test(val)
-        //          } else if (this.type === 'audio' || this.type === 'video') {
-        //            checkUrl = /^https?:\/\/.*\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/i.test(val)
-        //          }
       }
       if (checkUrl) {
         this.urlInternal = val;
@@ -237,7 +225,7 @@ export default {
     beforeUpload(file) {
       this.file = file;
       this.$emit("file", this.file);
-      const result = checkUpload(file, this.type, this.size);
+      const result = checkUpload(file, this.accept, this.size);
       if (this.checkUpload) {
         return this.checkUpload(file, result);
       } else {
