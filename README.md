@@ -34,6 +34,7 @@ export default {
     },
     // 上传文件预览地址
     url: {
+      type: null,
       required: true
     },
     // 上传前检查方法，第一个参数是上传文件数据，第二个参数是内部检查结果，方法必须返回布尔值，不是必须，默认走内部checkUpload逻辑
@@ -52,7 +53,8 @@ export default {
     },
     // size 单位KB，默认undefined，文件使用默认限制大小，如果不限制大小则传0
     size: {
-      type: Number
+      type: Number,
+      default: undefined
     },
     // 和HTML的input元素的accept属性一样，支持用逗号分隔的MIME类型或者.文件后缀名组成的字符串，默认空字符串，不限制类型
     accept: {
@@ -78,8 +80,16 @@ export default {
       type: Boolean,
       default: true
     },
+    // 上传失败清空url
+    errorUploadEmptyUrl: {
+      type: Boolean,
+      default: false
+    },
     // 组件下方显示的提示文本内容
-    tip: String
+    tip: {
+      type: String,
+      default: ""
+    }
   }
 };
 </script>
@@ -175,6 +185,6 @@ npm run dev:example
 npm run build
 
 # 发版
-npm version patch && npm publish --access public
+npm set @panhezeng:registry https://registry.npmjs.org/ && npm version patch && npm publish --access public && npm set @panhezeng:registry https://registry.npm.taobao.org/
 
 ```

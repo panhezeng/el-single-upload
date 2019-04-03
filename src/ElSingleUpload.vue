@@ -95,6 +95,7 @@ export default {
     },
     // 上传文件预览地址
     url: {
+      type: null,
       required: true
     },
     // 上传前检查方法，第一个参数是上传文件数据，第二个参数是内部检查结果，方法必须返回布尔值，不是必须，默认走内部checkUpload逻辑
@@ -113,7 +114,8 @@ export default {
     },
     // size 单位KB，默认undefined，文件使用默认限制大小，如果不限制大小则传0
     size: {
-      type: Number
+      type: Number,
+      default: undefined
     },
     // 和HTML的input元素的accept属性一样，支持用逗号分隔的MIME类型或者.文件后缀名组成的字符串，默认空字符串，不限制类型
     accept: {
@@ -139,8 +141,16 @@ export default {
       type: Boolean,
       default: true
     },
+    // 上传失败清空url
+    errorUploadEmptyUrl: {
+      type: Boolean,
+      default: false
+    },
     // 组件下方显示的提示文本内容
-    tip: String
+    tip: {
+      type: String,
+      default: ""
+    }
   },
   data() {
     return {
@@ -188,32 +198,13 @@ export default {
       }
       if (checkUrl) {
         this.urlInternal = val;
-        this.$nextTick(function() {
-          if (this.$refs.media) {
-            this.$refs.media.addEventListener(
-              "loadedmetadata",
-              event => {
-                this.$emit("media-duration", this.$refs.media.duration);
-                this.$emit("media", this.$refs.media);
-                //                console.log(this.$refs.media.duration)
-              },
-              true
-            );
-            this.$refs.media.addEventListener(
-              "error",
-              event => {
-                this.$emit("media-load-error", event);
-                //                this.setUrl()
-              },
-              true
-            );
-          }
-        });
       } else {
+        if (this.errorUploadEmptyUrl) {
+          this.urlInternal = "";
+          if (this.$refs.upload) this.$refs.upload.clearFiles();
+        }
         this.file = null;
         this.$emit("file", this.file);
-        this.urlInternal = "";
-        if (this.$refs.upload) this.$refs.upload.clearFiles();
         this.$emit("media-duration", "");
         this.$emit("media", null);
       }
@@ -221,6 +212,28 @@ export default {
       if (this.urlInternal !== this.url) {
         this.$emit("update:url", this.urlInternal);
       }
+
+      this.$nextTick(function() {
+        // 如果是媒体文件，则监听媒体数据加载完成事件
+        if (this.$refs.media) {
+          this.$refs.media.addEventListener(
+            "loadedmetadata",
+            event => {
+              this.$emit("media-duration", this.$refs.media.duration);
+              this.$emit("media", this.$refs.media);
+              //                console.log(this.$refs.media.duration)
+            },
+            true
+          );
+          this.$refs.media.addEventListener(
+            "error",
+            event => {
+              this.$emit("media-load-error", event);
+            },
+            true
+          );
+        }
+      });
     },
     beforeUpload(file) {
       this.file = file;
