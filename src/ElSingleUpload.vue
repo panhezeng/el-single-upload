@@ -232,7 +232,7 @@ export default {
             },
             true
           );
-          if (this.$refs.media.readyState === 1) {
+          if (this.$refs.media.readyState > 0) {
             emitMedia();
           }
           this.$refs.media.addEventListener(
