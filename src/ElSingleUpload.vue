@@ -216,15 +216,21 @@ export default {
       this.$nextTick(function() {
         // 如果是媒体文件，则监听媒体数据加载完成事件
         if (this.$refs.media) {
+          const emitMedia = () => {
+            this.$emit("media-duration", this.$refs.media.duration);
+            this.$emit("media", this.$refs.media);
+            //                console.log(this.$refs.media.duration)
+          };
           this.$refs.media.addEventListener(
             "loadedmetadata",
-            event => {
-              this.$emit("media-duration", this.$refs.media.duration);
-              this.$emit("media", this.$refs.media);
-              //                console.log(this.$refs.media.duration)
+            () => {
+              emitMedia();
             },
             true
           );
+          if (this.$refs.media.readyState === 1) {
+            emitMedia();
+          }
           this.$refs.media.addEventListener(
             "error",
             event => {
