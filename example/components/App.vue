@@ -15,7 +15,7 @@
 import UCloudUFile from "@panhezeng/ucloud-ufile";
 //  import '../../dist/el-single-upload.min.js'
 //  import Vue from 'vue'
-//    import ElSingleUpload from '../../dist/el-single-upload.min.js'
+import ElSingleUpload from "../../src/ElSingleUpload.vue";
 //    const ElSingleUpload = require('../../dist/el-single-upload.min.js')
 
 const ufile = new UCloudUFile(
@@ -68,24 +68,29 @@ function upload(option) {
   });
 }
 
-window.ElSingleUploadOptions = { upload: upload };
-require("../../dist/el-single-upload.min.js");
+// window.ElSingleUploadOptions = { upload: upload };
+// require("../../dist/el-single-upload.min.js");
 
-//  const ElSingleUpload = () => {
-//    return import('../../dist/el-single-upload.min.js').then(res => {
-//      Object.assign(res.props.upload, {
-//        required: false,
-//        default: upload
-//      })
-//      return Promise.resolve(res)
-//    })
-//  }
+// const ElSingleUpload = () => {
+//   return import("../../dist/el-single-upload.min.js").then(res => {
+//     Object.assign(res.props.upload, {
+//       required: false,
+//       default: upload
+//     });
+//     return Promise.resolve(res);
+//   });
+// };
+//
+// Vue.use(ElSingleUpload(), { upload: upload });
 
-//  Vue.use(ElSingleUpload(), {upload: upload})
+Object.assign(ElSingleUpload.props.upload, {
+  required: false,
+  default: upload
+});
 
 export default {
   name: "App",
-  //    components: {ElSingleUpload},
+  components: { ElSingleUpload },
   data() {
     return {
       url: ""

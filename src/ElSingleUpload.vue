@@ -190,6 +190,17 @@ export default {
     }
   },
   methods: {
+    empty(emptyUrl = true) {
+      if (emptyUrl) {
+        this.urlInternal = "";
+        if (this.$refs.upload) this.$refs.upload.clearFiles();
+      }
+      this.file = null;
+      this.$emit("file", this.file);
+      this.$emit("media-duration", "");
+      this.$emit("media", null);
+      this.$emit("update:url", this.urlInternal);
+    },
     setUrl(val) {
       // 如果地址有效则赋值，否则重置为空
       let checkUrl = Object.prototype.toString.call(val) === "[object String]";
@@ -199,14 +210,7 @@ export default {
       if (checkUrl) {
         this.urlInternal = val;
       } else {
-        if (this.errorUploadEmptyUrl) {
-          this.urlInternal = "";
-          if (this.$refs.upload) this.$refs.upload.clearFiles();
-        }
-        this.file = null;
-        this.$emit("file", this.file);
-        this.$emit("media-duration", "");
-        this.$emit("media", null);
+        this.empty(this.errorUploadEmptyUrl);
       }
       // 如果内部和外部不一样，则同步地址
       if (this.urlInternal !== this.url) {
@@ -280,12 +284,12 @@ export default {
       } else {
         Message.error("上传失败");
       }
-      this.setUrl();
+      this.empty(this.errorUploadEmptyUrl);
       this.$emit("error-upload", { err, file });
       this.$emit("finish-upload");
     },
     delConfirm() {
-      this.setUrl();
+      this.empty();
     }
   }
 };
