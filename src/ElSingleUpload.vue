@@ -202,6 +202,7 @@ export default {
       this.$emit("update:url", this.urlInternal);
     },
     setUrl(val) {
+      debugger;
       if (Object.prototype.toString.call(val) === "[object String]") {
         // 如果地址有效则赋值，否则重置为空
         if (/^https?:\/\//i.test(val)) {
@@ -210,7 +211,7 @@ export default {
           this.empty(this.errorUploadEmptyUrl);
         }
         // 如果内部和外部不一样，则同步地址
-        if (this.urlInternal !== val) {
+        if (this.urlInternal !== this.url) {
           this.$emit("update:url", this.urlInternal);
         }
         this.$nextTick(function() {
