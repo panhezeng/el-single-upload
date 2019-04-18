@@ -202,7 +202,6 @@ export default {
       this.$emit("update:url", this.urlInternal);
     },
     setUrl(val) {
-      debugger;
       if (Object.prototype.toString.call(val) === "[object String]") {
         // 如果地址有效则赋值，否则重置为空
         if (/^https?:\/\//i.test(val)) {
