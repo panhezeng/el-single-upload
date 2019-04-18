@@ -202,51 +202,45 @@ export default {
       this.$emit("update:url", this.urlInternal);
     },
     setUrl(val) {
-      // 如果地址有效则赋值，否则重置为空
-      let checkUrl = Object.prototype.toString.call(val) === "[object String]";
-      if (checkUrl) {
-        checkUrl = /^https?:\/\//i.test(val);
-      }
-      if (checkUrl) {
-        this.urlInternal = val;
-      } else {
-        this.empty(this.errorUploadEmptyUrl);
-      }
-      // 如果内部和外部不一样，则同步地址
-      if (
-        Object.prototype.toString.call(val) === "[object String]" &&
-        this.urlInternal !== val
-      ) {
-        this.$emit("update:url", this.urlInternal);
-      }
-
-      this.$nextTick(function() {
-        // 如果是媒体文件，则监听媒体数据加载完成事件
-        if (this.$refs.media) {
-          const emitMedia = () => {
-            this.$emit("media-duration", this.$refs.media.duration);
-            this.$emit("media", this.$refs.media);
-            //                console.log(this.$refs.media.duration)
-          };
-          this.$refs.media.addEventListener(
-            "loadedmetadata",
-            () => {
-              emitMedia();
-            },
-            true
-          );
-          if (this.$refs.media.readyState > 0) {
-            emitMedia();
-          }
-          this.$refs.media.addEventListener(
-            "error",
-            event => {
-              this.$emit("media-load-error", event);
-            },
-            true
-          );
+      if (Object.prototype.toString.call(val) === "[object String]") {
+        // 如果地址有效则赋值，否则重置为空
+        if (/^https?:\/\//i.test(val)) {
+          this.urlInternal = val;
+        } else {
+          this.empty(this.errorUploadEmptyUrl);
         }
-      });
+        // 如果内部和外部不一样，则同步地址
+        if (this.urlInternal !== val) {
+          this.$emit("update:url", this.urlInternal);
+        }
+        this.$nextTick(function() {
+          // 如果是媒体文件，则监听媒体数据加载完成事件
+          if (this.$refs.media) {
+            const emitMedia = () => {
+              this.$emit("media-duration", this.$refs.media.duration);
+              this.$emit("media", this.$refs.media);
+              //                console.log(this.$refs.media.duration)
+            };
+            this.$refs.media.addEventListener(
+              "loadedmetadata",
+              () => {
+                emitMedia();
+              },
+              true
+            );
+            if (this.$refs.media.readyState > 0) {
+              emitMedia();
+            }
+            this.$refs.media.addEventListener(
+              "error",
+              event => {
+                this.$emit("media-load-error", event);
+              },
+              true
+            );
+          }
+        });
+      }
     },
     beforeUpload(file) {
       this.file = file;
