@@ -162,7 +162,7 @@ export default {
   watch: {
     url: {
       immediate: true,
-      handler(val, oldVal) {
+      handler(val) {
         this.setUrl(val);
       }
     }
@@ -213,7 +213,10 @@ export default {
         this.empty(this.errorUploadEmptyUrl);
       }
       // 如果内部和外部不一样，则同步地址
-      if (this.urlInternal !== this.url) {
+      if (
+        Object.prototype.toString.call(val) === "[object String]" &&
+        this.urlInternal !== val
+      ) {
         this.$emit("update:url", this.urlInternal);
       }
 
