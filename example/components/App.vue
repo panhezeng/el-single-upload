@@ -7,8 +7,15 @@
     <!--<el-single-upload :url.sync="url" accept=".xls, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>-->
     <!--<el-single-upload :url.sync="url" accept="audio/*"/>-->
     <!--<el-single-upload :url.sync="url" accept="image/*"/>-->
-    <!--<el-single-upload :url.sync="url" accept=".mp4" />-->
-    <el-single-upload :url.sync="url" />
+    <el-single-upload
+      :url.sync="url"
+      accept="image/*"
+      @blur="eventLog('blur')"
+      @request-upload="eventLog('request-upload')"
+      @del="eventLog('del')"
+    />
+    <!--    <el-single-upload :url.sync="url" />-->
+    <!--    <el-single-upload :url.sync="url" accept=".mp4"/>-->
   </div>
 </template>
 
@@ -102,6 +109,10 @@ export default {
       return upload;
     }
   },
-  methods: {}
+  methods: {
+    eventLog(type) {
+      console.log(type);
+    }
+  }
 };
 </script>

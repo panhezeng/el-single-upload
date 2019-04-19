@@ -56,12 +56,13 @@
       <i class="el-icon-delete" slot="reference"></i>
     </el-popover-dialog>
     <el-input
-      :placeholder="$attrs.placeholder || '文件链接地址'"
+      v-if="input"
       v-model="urlInternal"
-      @blur="setUrl(urlInternal)"
+      :placeholder="$attrs.placeholder || '文件链接地址'"
       :disabled="$attrs.disabled"
       :readonly="readonly"
-      v-if="input"
+      @blur="setUrl(urlInternal)"
+      v-on="$listeners"
     />
     <div class="tip" v-if="tip">{{ tip }}</div>
     <slot />
@@ -196,7 +197,7 @@ export default {
         if (this.$refs.upload) this.$refs.upload.clearFiles();
       }
       this.file = null;
-      this.$emit("file", this.file);
+      this.$emit("file", null);
       this.$emit("media-duration", "");
       this.$emit("media", null);
       this.$emit("update:url", this.urlInternal);
@@ -244,7 +245,8 @@ export default {
     },
     beforeUpload(file) {
       this.file = file;
-      this.$emit("file", this.file);
+      this.$emit("file", file);
+      this.$emit("before-upload", file);
       const result = checkUpload(file, this.accept, this.size);
       if (this.checkUpload) {
         return this.checkUpload(file, result);
@@ -259,6 +261,7 @@ export default {
       return this.upload(option);
     },
     progressUpload(event, file) {
+      this.$emit("progress-upload", event);
       //        console.log('event, file', event, file)
       let percentage = parseInt(event.percent);
       if (Object.prototype.toString.call(event.percent) === "[object Number]") {
@@ -286,6 +289,7 @@ export default {
       this.$emit("finish-upload");
     },
     delConfirm() {
+      this.$emit("del");
       this.empty();
     }
   }
