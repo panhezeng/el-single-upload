@@ -60,7 +60,7 @@
       v-model="urlInternal"
       :placeholder="$attrs.placeholder || '文件链接地址'"
       :disabled="$attrs.disabled"
-      :readonly="readonly"
+      :readonly="readonlyInternal"
       @blur="setUrl(urlInternal)"
       v-on="$listeners"
     />
@@ -157,7 +157,8 @@ export default {
     return {
       file: null,
       urlInternal: "",
-      percentage: 100
+      percentage: 100,
+      readonlyInternal: false
     };
   },
   watch: {
@@ -165,6 +166,12 @@ export default {
       immediate: true,
       handler(val) {
         this.setUrl(val);
+      }
+    },
+    readonly: {
+      immediate: true,
+      handler(val) {
+        this.readonlyInternal = val;
       }
     }
   },
@@ -244,6 +251,8 @@ export default {
       }
     },
     beforeUpload(file) {
+      // 开始上传后，不让编辑
+      this.readonlyInternal = true;
       this.file = file;
       this.$emit("file", file);
       this.$emit("before-upload", file);
@@ -252,6 +261,9 @@ export default {
         return this.checkUpload(file, result);
       } else {
         if (result.message) Message.error(result.message);
+        if (!result.validate) {
+          this.finishUpload();
+        }
         return result.validate;
       }
     },
@@ -275,7 +287,7 @@ export default {
       this.setUrl(getObjectItemByPath(response, this.resPathOfUrl));
       this.percentage = 100;
       this.$emit("success-upload", response);
-      this.$emit("finish-upload");
+      this.finishUpload();
     },
     errorUpload(err, file) {
       this.percentage = 100;
@@ -286,6 +298,11 @@ export default {
       }
       this.empty(this.errorUploadEmptyUrl);
       this.$emit("error-upload", { err, file });
+      this.finishUpload();
+    },
+    finishUpload() {
+      // 上传完成恢复
+      this.readonlyInternal = this.readonly;
       this.$emit("finish-upload");
     },
     delConfirm() {
