@@ -23,8 +23,8 @@
 import UCloudUFile from "@panhezeng/ucloud-ufile";
 //  import '../../dist/el-single-upload.min.js'
 //  import Vue from 'vue'
-import ElSingleUpload from "../../src/ElSingleUpload.vue";
-//    const ElSingleUpload = require('../../dist/el-single-upload.min.js')
+//  import ElSingleUpload from "../../dist/el-single-upload.min.js";
+//  const ElSingleUpload = require('../../dist/el-single-upload.min.js')
 
 const ufile = new UCloudUFile(
   "example-ucloud",
@@ -76,8 +76,8 @@ function upload(option) {
   });
 }
 
-// window.ElSingleUploadOptions = { upload: upload };
-// require("../../dist/el-single-upload.min.js");
+window.ElSingleUploadOptions = { upload: upload };
+require("../../src");
 
 // const ElSingleUpload = () => {
 //   return import("../../dist/el-single-upload.min.js").then(res => {
@@ -91,14 +91,9 @@ function upload(option) {
 //
 // Vue.use(ElSingleUpload(), { upload: upload });
 
-Object.assign(ElSingleUpload.props.upload, {
-  required: false,
-  default: upload
-});
-
 export default {
   name: "App",
-  components: { ElSingleUpload },
+  // components: { ElSingleUpload },
   data() {
     return {
       url: ""
