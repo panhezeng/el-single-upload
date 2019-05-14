@@ -157,14 +157,23 @@ export default {
     return {
       file: null,
       urlInternal: "",
-      percentage: 100
+      percentage: 100,
+      emptyUrl: false
     };
   },
   watch: {
     url: {
       immediate: true,
       handler(val) {
+        this.emptyUrl = true;
         this.setUrl(val);
+        this.emptyUrl = this.errorUploadEmptyUrl;
+      }
+    },
+    errorUploadEmptyUrl: {
+      immediate: true,
+      handler(val) {
+        this.emptyUrl = val;
       }
     }
   },
@@ -208,7 +217,7 @@ export default {
         if (/^https?:\/\//i.test(val)) {
           this.urlInternal = val;
         } else {
-          this.empty(this.errorUploadEmptyUrl);
+          this.empty(this.emptyUrl);
         }
         // 如果内部和外部不一样，则同步地址
         if (this.urlInternal !== this.url) {
@@ -284,7 +293,7 @@ export default {
       } else {
         Message.error("上传失败");
       }
-      this.empty(this.errorUploadEmptyUrl);
+      this.empty(this.emptyUrl);
       this.$emit("error-upload", { err, file });
       this.$emit("finish-upload");
     },
@@ -299,7 +308,6 @@ export default {
 .el-single-upload {
   position: relative;
   width: 300px;
-  height: 90px;
   display: inline-block;
 
   .view {

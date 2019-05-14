@@ -4,9 +4,13 @@
     <!--<el-single-upload :url.sync="url" :upload="upload"/>-->
     <!--<el-single-upload :url.sync="url" :disabled="true"/>-->
     <!--<el-single-upload :url.sync="url" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"/>-->
-    <!--<el-single-upload :url.sync="url" accept=".xls, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>-->
+    <!--    <el-single-upload-->
+    <!--      :url.sync="url"-->
+    <!--      :view="false"-->
+    <!--      accept=".xls, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"-->
+    <!--    />-->
     <!--<el-single-upload :url.sync="url" accept="audio/*"/>-->
-    <!--<el-single-upload :url.sync="url" accept="image/*"/>-->
+    <!--    <el-single-upload :url.sync="url" accept="image/*" />-->
     <el-single-upload
       :url.sync="url"
       accept="image/*"
