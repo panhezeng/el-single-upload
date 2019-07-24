@@ -16,6 +16,8 @@
 
 修改了 output 方式，通过 require 或 window 方式使用，不需要加.default
 
+打包 polyfills 应当是最终使用组件的应用的责任
+
 事件 this.$emit('request-upload', option)  this.$emit('success-upload', response) this.$emit('error-upload', {err, file}) this.$emit('finish-upload')
 
 ```vue
@@ -185,6 +187,5 @@ npm run dev:example
 npm run build
 
 # 发版
-npm set @panhezeng:registry https://registry.npmjs.org/ && npm version patch && npm publish --access public && npm set @panhezeng:registry https://registry.npm.taobao.org/npm set registry https://registry.npmjs.org/ && npm set @panhezeng:registry https://registry.npmjs.org/ && npm version patch && npm publish --access public && npm set registry https://registry.npm.taobao.org/ && npm set @panhezeng:registry https://registry.npm.taobao.org/
-
+npm set registry https://registry.npmjs.org/ && npm set @panhezeng:registry https://registry.npmjs.org/ && npm version patch && npm publish --access public && npm set registry https://registry.npm.taobao.org/ && npm set @panhezeng:registry https://registry.npm.taobao.org/
 ```
