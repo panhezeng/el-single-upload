@@ -49,9 +49,9 @@
     <el-popover-dialog
       v-bind="$attrs"
       class="icon-delete"
-      :btn-show="false"
-      @confirm="delConfirm"
-      v-if="urlInternal && del && !$attrs.disabled"
+      :button-show="false"
+      @confirm="deleteConfirm"
+      v-if="urlInternal && deleteButton && !$attrs.disabled"
     >
       <i class="el-icon-delete" slot="reference"></i>
     </el-popover-dialog>
@@ -103,8 +103,8 @@ export default {
     checkUpload: Function,
     // 上传结果错误处理，不是必须，默认走内部错误逻辑
     error: Function,
-    // 是否需要删除功能
-    del: {
+    // 是否需要显示删除按钮
+    deleteButton: {
       type: Boolean,
       default: true
     },
@@ -118,6 +118,23 @@ export default {
       type: Number,
       default: undefined
     },
+    // 图片类型宽度高度限制，默认不限制
+    imageDimensions: {
+      validator(value) {
+        return (
+          /^\[object Object\]$/.test(Object.prototype.toString.call(value)) &&
+          Object.prototype.hasOwnProperty.call(value, "width") &&
+          Object.prototype.hasOwnProperty.call(value, "height")
+        );
+      },
+      type: Object,
+      default() {
+        return {
+          width: undefined,
+          height: undefined
+        };
+      }
+    },
     // 和HTML的input元素的accept属性一样，支持用逗号分隔的MIME类型或者.文件后缀名组成的字符串，默认空字符串，不限制类型
     accept: {
       validator(value) {
@@ -125,6 +142,7 @@ export default {
           value === "" || /^(image|audio|video|text|application|\.)/.test(value)
         );
       },
+      type: String,
       default: ""
     },
     // 是否显示文件url的文本框，用于编辑复制粘贴等需求
@@ -265,15 +283,26 @@ export default {
       this.file = file;
       this.$emit("file", file);
       this.$emit("before-upload", file);
-      const result = checkUpload(file, this.accept, this.size);
       if (this.checkUpload) {
-        return this.checkUpload(file, result);
+        return this.checkUpload(file);
       } else {
-        if (result.message) Message.error(result.message);
-        if (!result.validate) {
-          this.finishUpload();
-        }
-        return result.validate;
+        return new Promise(async (resolve, reject) => {
+          const result = await checkUpload(
+            file,
+            this.accept,
+            this.size,
+            this.imageDimensions.width,
+            this.imageDimensions.height
+          );
+          if (result.validation) {
+            resolve();
+          } else {
+            if (result.message) Message.error(result.message);
+            this.readonlyInternal = this.readonly;
+            this.$emit("validation-error");
+            reject();
+          }
+        });
       }
     },
     requestUpload(option) {
@@ -314,8 +343,8 @@ export default {
       this.readonlyInternal = this.readonly;
       this.$emit("finish-upload");
     },
-    delConfirm() {
-      this.$emit("del");
+    deleteConfirm() {
+      this.$emit("delete-confirm");
       this.empty();
     }
   }

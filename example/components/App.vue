@@ -14,9 +14,10 @@
     <el-single-upload
       :url.sync="url"
       accept="image/*"
+      :image-dimensions="{ width: 50, height: 50 }"
       @blur="eventLog('blur')"
       @request-upload="eventLog('request-upload')"
-      @del="eventLog('del')"
+      @delete-confirm="eventLog('delete-confirm')"
     />
     <!--    <el-single-upload :url.sync="url" />-->
     <!--    <el-single-upload :url.sync="url" accept=".mp4"/>-->
