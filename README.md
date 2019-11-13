@@ -18,6 +18,8 @@
 
 事件 this.$emit('request-upload', option)  this.$emit('success-upload', response) this.$emit('error-upload', {err, file}) this.$emit('finish-upload')
 
+使用了 Promise, 请自行解决兼容性
+
 ```vue
 <script>
 export default {
