@@ -41,8 +41,8 @@ export default {
     checkUpload: Function,
     // 上传结果错误处理，不是必须，默认走内部错误逻辑
     error: Function,
-    // 是否需要删除功能
-    del: {
+    // 是否需要显示删除按钮
+    deleteButton: {
       type: Boolean,
       default: true
     },
@@ -56,6 +56,23 @@ export default {
       type: Number,
       default: undefined
     },
+    // 图片类型宽度高度限制，默认不限制
+    imageDimensions: {
+      validator(value) {
+        return (
+          /^\[object Object\]$/.test(Object.prototype.toString.call(value)) &&
+          Object.prototype.hasOwnProperty.call(value, "width") &&
+          Object.prototype.hasOwnProperty.call(value, "height")
+        );
+      },
+      type: Object,
+      default() {
+        return {
+          width: undefined,
+          height: undefined
+        };
+      }
+    },
     // 和HTML的input元素的accept属性一样，支持用逗号分隔的MIME类型或者.文件后缀名组成的字符串，默认空字符串，不限制类型
     accept: {
       validator(value) {
@@ -63,6 +80,7 @@ export default {
           value === "" || /^(image|audio|video|text|application|\.)/.test(value)
         );
       },
+      type: String,
       default: ""
     },
     // 是否显示文件url的文本框，用于编辑复制粘贴等需求
