@@ -287,21 +287,22 @@ export default {
         return this.checkUpload(file);
       } else {
         return new Promise(async (resolve, reject) => {
-          const result = await checkUpload(
+          checkUpload(
             file,
             this.accept,
             this.size,
             this.imageDimensions.width,
             this.imageDimensions.height
-          );
-          if (result.validation) {
-            resolve();
-          } else {
-            if (result.message) Message.error(result.message);
-            this.readonlyInternal = this.readonly;
-            this.$emit("validation-error");
-            reject();
-          }
+          ).then(result => {
+            if (result.validation) {
+              resolve();
+            } else {
+              if (result.message) Message.error(result.message);
+              this.readonlyInternal = this.readonly;
+              this.$emit("validation-error");
+              reject();
+            }
+          });
         });
       }
     },
