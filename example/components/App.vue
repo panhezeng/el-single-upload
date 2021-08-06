@@ -20,7 +20,7 @@
       @delete-confirm="eventLog('delete-confirm')"
     />
     <!--    <el-single-upload :url.sync="url" />-->
-    <!--    <el-single-upload :url.sync="url" accept=".mp4"/>-->
+    <!--        <el-single-upload :url.sync="url" accept=".mp4"/>-->
   </div>
 </template>
 
@@ -46,20 +46,21 @@ function upload(option) {
   return new Promise((resolve, reject) => {
     ufile.PREFIX = `example/${file.type}`;
 
-    const success = res => {
+    const success = (res) => {
       if (Object.prototype.toString.call(res) !== "[object Object]") {
         res = { Key: file.name };
       }
       res.url = `http://dummyimage.com/200x100/50B347/FFF&text=${res.Key}`;
+      // res.url = 'https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4'
       console.log("success", res);
       resolve({ data: res });
     };
 
-    const error = res => {
+    const error = (res) => {
       reject(new Error("上传失败"));
     };
 
-    const progress = res => {
+    const progress = (res) => {
       if (Object.prototype.toString.call(res) !== "[object Object]") {
         res = { value: 0 };
       }
@@ -101,18 +102,18 @@ export default {
   // components: { ElSingleUpload },
   data() {
     return {
-      url: ""
+      url: "",
     };
   },
   computed: {
     upload() {
       return upload;
-    }
+    },
   },
   methods: {
     eventLog(type) {
       console.log(type);
-    }
-  }
+    },
+  },
 };
 </script>

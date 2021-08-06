@@ -1,10 +1,17 @@
 <template>
   <div class="el-single-upload" :class="{ [acceptClassName]: true, input }">
     <template class="view-box" v-if="view && urlInternal">
+      <div
+        class="check-can-play"
+        v-if="acceptClassName === 'video' && !canPlay"
+      >
+        校验视频是否可以播放中...
+      </div>
       <video
         ref="media"
         class="view"
         controls
+        preload="metadata"
         :src="urlInternal"
         v-if="acceptClassName === 'video'"
       ></video>
@@ -20,7 +27,7 @@
           class="img"
           :src="urlInternal"
           v-if="acceptClassName === 'image'"
-        /><span style="display:inline-block;padding: 10px 15px;" v-else>{{
+        /><span style="display: inline-block; padding: 10px 15px;" v-else>{{
           file ? file.name : urlInternal
         }}</span></a
       >
@@ -80,24 +87,24 @@ export default {
     "el-progress": Progress,
     "el-upload": Upload,
     "el-input": Input,
-    ElPopoverDialog
+    ElPopoverDialog,
   },
   inheritAttrs: false,
   props: {
     // 上传文件的方法
     upload: {
       required: true,
-      type: Function
+      type: Function,
     },
     // 从上传方法返回对象中获取url的path
     resPathOfUrl: {
       type: String,
-      default: "data.url"
+      default: "data.url",
     },
     // 上传文件预览地址
     url: {
       type: null,
-      required: true
+      required: true,
     },
     // 上传前检查方法，第一个参数是上传文件数据，第二个参数是内部检查结果，方法必须返回布尔值，不是必须，默认走内部checkUpload逻辑
     checkUpload: Function,
@@ -106,17 +113,17 @@ export default {
     // 是否需要显示删除按钮
     deleteButton: {
       type: Boolean,
-      default: true
+      default: true,
     },
     // 是否需要预览功能
     view: {
       type: Boolean,
-      default: true
+      default: true,
     },
     // size 单位KB，默认undefined，文件使用默认限制大小，如果不限制大小则传0
     size: {
       type: Number,
-      default: undefined
+      default: undefined,
     },
     // 图片类型宽度高度限制，默认不限制
     imageDimensions: {
@@ -131,9 +138,9 @@ export default {
       default() {
         return {
           width: undefined,
-          height: undefined
+          height: undefined,
         };
-      }
+      },
     },
     // 和HTML的input元素的accept属性一样，支持用逗号分隔的MIME类型或者.文件后缀名组成的字符串，默认空字符串，不限制类型
     accept: {
@@ -143,33 +150,33 @@ export default {
         );
       },
       type: String,
-      default: ""
+      default: "",
     },
     // 是否显示文件url的文本框，用于编辑复制粘贴等需求
     input: {
       type: Boolean,
-      default: true
+      default: true,
     },
     // 是否只读，如果只读，只能选择复制文件url地址，不能编辑
     readonly: {
       type: Boolean,
-      default: false
+      default: false,
     },
     // 拖拽上传
     drag: {
       type: Boolean,
-      default: true
+      default: true,
     },
     // 上传失败清空url
     errorUploadEmptyUrl: {
       type: Boolean,
-      default: false
+      default: false,
     },
     // 组件下方显示的提示文本内容
     tip: {
       type: String,
-      default: ""
-    }
+      default: "",
+    },
   },
   data() {
     return {
@@ -177,7 +184,9 @@ export default {
       urlInternal: "",
       percentage: 100,
       emptyUrl: false,
-      readonlyInternal: false
+      readonlyInternal: false,
+      canPlay: false,
+      timeoutId: 0,
     };
   },
   watch: {
@@ -187,20 +196,20 @@ export default {
         this.emptyUrl = true;
         this.setUrl(val);
         this.emptyUrl = this.errorUploadEmptyUrl;
-      }
+      },
     },
     errorUploadEmptyUrl: {
       immediate: true,
       handler(val) {
         this.emptyUrl = val;
-      }
+      },
     },
     readonly: {
       immediate: true,
       handler(val) {
         this.readonlyInternal = val;
-      }
-    }
+      },
+    },
   },
   computed: {
     acceptClassName() {
@@ -222,6 +231,12 @@ export default {
       } else {
         return "";
       }
+    },
+  },
+  beforeDestroy() {
+    if (this.timeoutId) {
+      window.clearTimeout(this.timeoutId);
+      this.timeoutId = 0;
     }
   },
   methods: {
@@ -248,33 +263,6 @@ export default {
         if (this.urlInternal !== this.url) {
           this.$emit("update:url", this.urlInternal);
         }
-        this.$nextTick(function() {
-          // 如果是媒体文件，则监听媒体数据加载完成事件
-          if (this.$refs.media) {
-            const emitMedia = () => {
-              this.$emit("media-duration", this.$refs.media.duration);
-              this.$emit("media", this.$refs.media);
-              //                console.log(this.$refs.media.duration)
-            };
-            this.$refs.media.addEventListener(
-              "loadedmetadata",
-              () => {
-                emitMedia();
-              },
-              true
-            );
-            if (this.$refs.media.readyState > 0) {
-              emitMedia();
-            }
-            this.$refs.media.addEventListener(
-              "error",
-              event => {
-                this.$emit("media-load-error", event);
-              },
-              true
-            );
-          }
-        });
       }
     },
     beforeUpload(file) {
@@ -293,7 +281,7 @@ export default {
             this.size,
             this.imageDimensions.width,
             this.imageDimensions.height
-          ).then(result => {
+          ).then((result) => {
             if (result.validation) {
               resolve();
             } else {
@@ -327,6 +315,46 @@ export default {
       this.percentage = 100;
       this.$emit("success-upload", response);
       this.finishUpload();
+      if (this.acceptClassName === "video") {
+        this.canPlay = false;
+        this.$nextTick().then(() => {
+          // 如果是媒体文件，则监听媒体数据加载完成事件
+          if (this.$refs.media) {
+            const emitMedia = () => {
+              if (this.timeoutId) {
+                window.clearTimeout(this.timeoutId);
+                this.timeoutId = 0;
+              }
+              this.canPlay = true;
+              this.$emit("media-duration", this.$refs.media.duration);
+              this.$emit("media", this.$refs.media);
+              //                console.log(this.$refs.media.duration)
+            };
+            const emitMediaError = () => {
+              if (this.timeoutId) {
+                window.clearTimeout(this.timeoutId);
+                this.timeoutId = 0;
+              }
+              this.empty();
+              this.canPlay = false;
+              this.$emit("media-load-error");
+              Message.error("视频不能播放，请重新上传");
+            };
+            this.$refs.media.addEventListener("canplay", () => {
+              emitMedia();
+            });
+            if (this.$refs.media.readyState > 2) {
+              emitMedia();
+            }
+            this.$refs.media.addEventListener("error", () => {
+              emitMediaError();
+            });
+            this.timeoutId = window.setTimeout(() => {
+              emitMediaError();
+            }, 60000);
+          }
+        });
+      }
     },
     errorUpload(err, file) {
       this.percentage = 100;
@@ -347,8 +375,8 @@ export default {
     deleteConfirm() {
       this.$emit("delete-confirm");
       this.empty();
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less">
@@ -356,6 +384,21 @@ export default {
   position: relative;
   width: 300px;
   display: inline-block;
+
+  .check-can-play {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    background: rgba(#000, 0.8);
+    color: #fff;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
   .view {
     line-height: 1;
