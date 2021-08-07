@@ -3,9 +3,12 @@
     <template class="view-box" v-if="view && urlInternal">
       <div
         class="check-can-play"
-        v-if="acceptClassName === 'video' && !canPlay"
+        v-if="
+          (acceptClassName === 'video' || acceptClassName === 'audio') &&
+          !canPlay
+        "
       >
-        校验视频是否可以播放中...
+        检测能否播放中...
       </div>
       <video
         ref="media"
@@ -19,6 +22,7 @@
         ref="media"
         class="view"
         controls
+        preload="metadata"
         :src="urlInternal"
         v-else-if="acceptClassName === 'audio'"
       ></audio>
@@ -315,7 +319,10 @@ export default {
       this.percentage = 100;
       this.$emit("success-upload", response);
       this.finishUpload();
-      if (this.acceptClassName === "video") {
+      if (
+        this.acceptClassName === "video" ||
+        this.acceptClassName === "audio"
+      ) {
         this.canPlay = false;
         this.$nextTick().then(() => {
           // 如果是媒体文件，则监听媒体数据加载完成事件
@@ -338,7 +345,7 @@ export default {
               this.empty();
               this.canPlay = false;
               this.$emit("media-load-error");
-              Message.error("视频不能播放，请重新上传");
+              Message.error("不能正常播放，请重新上传");
             };
             this.$refs.media.addEventListener("canplay", () => {
               emitMedia();
