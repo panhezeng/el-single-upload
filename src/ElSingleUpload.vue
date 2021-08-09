@@ -260,6 +260,49 @@ export default {
         // 如果地址有效则赋值，否则重置为空
         if (/^https?:\/\//i.test(val)) {
           this.urlInternal = val;
+          if (
+            this.acceptClassName === "video" ||
+            this.acceptClassName === "audio"
+          ) {
+            this.canPlay = false;
+            this.$nextTick().then(() => {
+              // 如果是媒体文件，则监听媒体数据加载完成事件
+              if (this.$refs.media) {
+                const emitMedia = () => {
+                  if (this.timeoutId) {
+                    window.clearTimeout(this.timeoutId);
+                    this.timeoutId = 0;
+                  }
+                  this.canPlay = true;
+                  this.$emit("media-duration", this.$refs.media.duration);
+                  this.$emit("media", this.$refs.media);
+                  //                console.log(this.$refs.media.duration)
+                };
+                const emitMediaError = () => {
+                  if (this.timeoutId) {
+                    window.clearTimeout(this.timeoutId);
+                    this.timeoutId = 0;
+                  }
+                  this.empty();
+                  this.canPlay = false;
+                  this.$emit("media-load-error");
+                  Message.error("不能正常播放，请重新上传");
+                };
+                this.$refs.media.addEventListener("canplay", () => {
+                  emitMedia();
+                });
+                if (this.$refs.media.readyState > 2) {
+                  emitMedia();
+                }
+                this.$refs.media.addEventListener("error", () => {
+                  emitMediaError();
+                });
+                this.timeoutId = window.setTimeout(() => {
+                  emitMediaError();
+                }, 60000);
+              }
+            });
+          }
         } else {
           this.empty(this.emptyUrl);
         }
@@ -319,49 +362,6 @@ export default {
       this.percentage = 100;
       this.$emit("success-upload", response);
       this.finishUpload();
-      if (
-        this.acceptClassName === "video" ||
-        this.acceptClassName === "audio"
-      ) {
-        this.canPlay = false;
-        this.$nextTick().then(() => {
-          // 如果是媒体文件，则监听媒体数据加载完成事件
-          if (this.$refs.media) {
-            const emitMedia = () => {
-              if (this.timeoutId) {
-                window.clearTimeout(this.timeoutId);
-                this.timeoutId = 0;
-              }
-              this.canPlay = true;
-              this.$emit("media-duration", this.$refs.media.duration);
-              this.$emit("media", this.$refs.media);
-              //                console.log(this.$refs.media.duration)
-            };
-            const emitMediaError = () => {
-              if (this.timeoutId) {
-                window.clearTimeout(this.timeoutId);
-                this.timeoutId = 0;
-              }
-              this.empty();
-              this.canPlay = false;
-              this.$emit("media-load-error");
-              Message.error("不能正常播放，请重新上传");
-            };
-            this.$refs.media.addEventListener("canplay", () => {
-              emitMedia();
-            });
-            if (this.$refs.media.readyState > 2) {
-              emitMedia();
-            }
-            this.$refs.media.addEventListener("error", () => {
-              emitMediaError();
-            });
-            this.timeoutId = window.setTimeout(() => {
-              emitMediaError();
-            }, 60000);
-          }
-        });
-      }
     },
     errorUpload(err, file) {
       this.percentage = 100;
