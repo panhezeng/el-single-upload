@@ -9,8 +9,8 @@
     <!--      :view="false"-->
     <!--      accept=".xls, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"-->
     <!--    />-->
-    <!--<el-single-upload :url.sync="url" accept="audio/*"/>-->
-    <!--    <el-single-upload :url.sync="url" accept="image/*" />-->
+    <!--  <el-single-upload :url.sync="url" accept="audio/*"/>-->
+    <!--        <el-single-upload :url.sync="url" accept="image/*" />-->
     <el-single-upload
       :url.sync="url"
       accept="image/*"
@@ -19,8 +19,8 @@
       @request-upload="eventLog('request-upload')"
       @delete-confirm="eventLog('delete-confirm')"
     />
-    <!--    <el-single-upload :url.sync="url" />-->
-    <!--        <el-single-upload :url.sync="url" accept=".mp4"/>-->
+    <!--   <el-single-upload :url.sync="url" />-->
+    <!--   <el-single-upload :url.sync="url" accept=".mp4" />-->
   </div>
 </template>
 

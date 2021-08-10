@@ -242,12 +242,18 @@ export default {
       window.clearTimeout(this.timeoutId);
       this.timeoutId = 0;
     }
+    if (this.$refs.media) {
+      this.$refs.media.removeEventListener("canplay", this.emitMedia);
+      this.$refs.media.removeEventListener("error", this.emitMediaError);
+    }
   },
   methods: {
     empty(emptyUrl = true) {
       if (emptyUrl) {
         this.urlInternal = "";
-        if (this.$refs.upload) this.$refs.upload.clearFiles();
+        if (this.$refs.upload) {
+          this.$refs.upload.clearFiles();
+        }
       }
       this.file = null;
       this.$emit("file", null);
@@ -255,54 +261,63 @@ export default {
       this.$emit("media", null);
       this.$emit("update:url", this.urlInternal);
     },
+    emitMedia() {
+      if (this.timeoutId) {
+        window.clearTimeout(this.timeoutId);
+        this.timeoutId = 0;
+      }
+      this.canPlay = true;
+      if (this.$refs.media) {
+        this.$emit("media-duration", this.$refs.media.duration);
+        this.$emit("media", this.$refs.media);
+        //                console.log(this.$refs.media.duration)
+      }
+    },
+    emitMediaError() {
+      if (this.timeoutId) {
+        window.clearTimeout(this.timeoutId);
+        this.timeoutId = 0;
+      }
+      this.empty();
+      this.canPlay = false;
+      if (this.$refs.media) {
+        this.$emit("media-load-error");
+        Message.error("不能正常播放，请重新上传");
+      }
+    },
+    canplayHandler() {
+      if (
+        this.acceptClassName === "video" ||
+        this.acceptClassName === "audio"
+      ) {
+        this.canPlay = false;
+        this.$nextTick().then(() => {
+          // 如果是媒体文件，则监听媒体数据加载完成事件
+          if (this.$refs.media) {
+            this.$refs.media.addEventListener(
+              "canplay",
+              this.emitMedia.bind(this)
+            );
+            if (this.$refs.media.readyState > 2) {
+              this.emitMedia();
+            }
+            this.$refs.media.addEventListener(
+              "error",
+              this.emitMediaError.bind(this)
+            );
+            this.timeoutId = window.setTimeout(() => {
+              this.emitMediaError();
+            }, 60000);
+          }
+        });
+      }
+    },
     setUrl(val) {
       if (Object.prototype.toString.call(val) === "[object String]") {
         // 如果地址有效则赋值，否则重置为空
         if (/^https?:\/\//i.test(val)) {
           this.urlInternal = val;
-          if (
-            this.acceptClassName === "video" ||
-            this.acceptClassName === "audio"
-          ) {
-            this.canPlay = false;
-            this.$nextTick().then(() => {
-              // 如果是媒体文件，则监听媒体数据加载完成事件
-              if (this.$refs.media) {
-                const emitMedia = () => {
-                  if (this.timeoutId) {
-                    window.clearTimeout(this.timeoutId);
-                    this.timeoutId = 0;
-                  }
-                  this.canPlay = true;
-                  this.$emit("media-duration", this.$refs.media.duration);
-                  this.$emit("media", this.$refs.media);
-                  //                console.log(this.$refs.media.duration)
-                };
-                const emitMediaError = () => {
-                  if (this.timeoutId) {
-                    window.clearTimeout(this.timeoutId);
-                    this.timeoutId = 0;
-                  }
-                  this.empty();
-                  this.canPlay = false;
-                  this.$emit("media-load-error");
-                  Message.error("不能正常播放，请重新上传");
-                };
-                this.$refs.media.addEventListener("canplay", () => {
-                  emitMedia();
-                });
-                if (this.$refs.media.readyState > 2) {
-                  emitMedia();
-                }
-                this.$refs.media.addEventListener("error", () => {
-                  emitMediaError();
-                });
-                this.timeoutId = window.setTimeout(() => {
-                  emitMediaError();
-                }, 60000);
-              }
-            });
-          }
+          this.canplayHandler();
         } else {
           this.empty(this.emptyUrl);
         }
