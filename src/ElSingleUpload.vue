@@ -289,7 +289,7 @@ export default {
       // this.empty();
       this.canPlay = false;
       if (this.$refs.media) {
-        this.checkPlayTxt = "当前网络异常不能播放，请稍后再预览";
+        this.checkPlayTxt = "当前网络异常不能播放，请稍后再播";
         // Message.error("当前网络异常不能播放，请稍后预览");
         this.$emit("media-load-error");
       }
