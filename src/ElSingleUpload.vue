@@ -8,7 +8,7 @@
           !canPlay
         "
       >
-        检测能否播放中...
+        <span>{{ checkPlayTxt }}</span>
       </div>
       <video
         ref="media"
@@ -90,7 +90,7 @@ import { Progress, Upload, Input, Message } from "element-ui";
 import checkUpload from "@panhezeng/utils/dist/check-upload.js";
 import getObjectItemByPath from "@panhezeng/utils/dist/get-object-item-by-path.js";
 import ElPopoverDialog from "@panhezeng/el-popover-dialog";
-
+const checkPlayTxtInit = "检测能否播放中...";
 export default {
   name: "ElSingleUpload",
   components: {
@@ -196,6 +196,7 @@ export default {
       emptyUrl: false,
       readonlyInternal: false,
       canPlay: false,
+      checkPlayTxt: checkPlayTxtInit,
       timeoutId: 0,
     };
   },
@@ -274,6 +275,7 @@ export default {
       }
       this.canPlay = true;
       if (this.$refs.media) {
+        this.checkPlayTxt = "";
         this.$emit("media-duration", this.$refs.media.duration);
         this.$emit("media", this.$refs.media);
         //                console.log(this.$refs.media.duration)
@@ -284,11 +286,12 @@ export default {
         window.clearTimeout(this.timeoutId);
         this.timeoutId = 0;
       }
-      this.empty();
+      // this.empty();
       this.canPlay = false;
       if (this.$refs.media) {
+        this.checkPlayTxt = "当前网络异常不能播放，请稍后再预览";
+        // Message.error("当前网络异常不能播放，请稍后预览");
         this.$emit("media-load-error");
-        Message.error("不能正常播放，请重新上传");
       }
     },
     canplayHandler() {
@@ -296,6 +299,7 @@ export default {
         this.acceptClassName === "video" ||
         this.acceptClassName === "audio"
       ) {
+        this.checkPlayTxt = checkPlayTxtInit;
         this.canPlay = false;
         this.$nextTick().then(() => {
           // 如果是媒体文件，则监听媒体数据加载完成事件
@@ -430,12 +434,15 @@ export default {
     width: 100%;
     height: 100%;
     text-align: center;
-    background: rgba(#000, 0.8);
+    background: rgba(#000, 0.6);
     color: #fff;
     z-index: 1000;
     display: flex;
     justify-content: center;
     align-items: center;
+    span{
+      padding: 10px;
+    }
   }
 
   .view {
