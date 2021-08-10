@@ -36,7 +36,13 @@
         }}</span></a
       >
     </template>
-    <el-progress :percentage="percentage" v-if="percentage !== 100" />
+    <el-progress
+      v-if="percentage !== 100"
+      :percentage="percentage"
+      :text-inside="true"
+      :stroke-width="20"
+      :format="progressFormat"
+    />
     <el-upload
       class="upload"
       :class="{ update: urlInternal }"
@@ -345,6 +351,7 @@ export default {
             this.imageDimensions.height
           ).then((result) => {
             if (result.validation) {
+              // Message.info("文件读取中...");
               resolve();
             } else {
               if (result.message) Message.error(result.message);
@@ -364,12 +371,12 @@ export default {
     progressUpload(event, file) {
       this.$emit("progress-upload", event);
       //        console.log('event, file', event, file)
-      let percentage = parseInt(event.percent);
-      if (Object.prototype.toString.call(event.percent) === "[object Number]") {
+      let percentage = 0;
+      if (typeof event.percent === "number") {
         percentage = event.percent;
       }
       if (percentage >= 100) percentage = 99;
-      this.percentage = percentage;
+      this.percentage = Math.floor(percentage);
     },
     successUpload(response) {
       //        console.log('response', response)
@@ -397,6 +404,15 @@ export default {
     deleteConfirm() {
       this.$emit("delete-confirm");
       this.empty();
+    },
+    progressFormat() {
+      if (this.percentage === 99) {
+        return `文件上传中...`;
+      } else if (this.percentage > 99) {
+        return `文件上传完成`;
+      } else {
+        return `文件读取${this.percentage}%`;
+      }
     },
   },
 };
@@ -555,6 +571,9 @@ export default {
       height: 100%;
       object-fit: contain;
     }
+  }
+  .el-progress-bar__innerText {
+    color: #000;
   }
 }
 </style>
