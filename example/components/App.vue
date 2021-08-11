@@ -11,16 +11,16 @@
     <!--    />-->
     <!--  <el-single-upload :url.sync="url" accept="audio/*"/>-->
     <!--        <el-single-upload :url.sync="url" accept="image/*" />-->
-    <el-single-upload
-      :url.sync="url"
-      accept="image/*"
-      :image-dimensions="{ width: 50, height: 50 }"
-      @blur="eventLog('blur')"
-      @request-upload="eventLog('request-upload')"
-      @delete-confirm="eventLog('delete-confirm')"
-    />
+<!--    <el-single-upload-->
+<!--      :url.sync="url"-->
+<!--      accept="image/*"-->
+<!--      :image-dimensions="{ width: 50, height: 50 }"-->
+<!--      @blur="eventLog('blur')"-->
+<!--      @request-upload="eventLog('request-upload')"-->
+<!--      @delete-confirm="eventLog('delete-confirm')"-->
+<!--    />-->
     <!--   <el-single-upload :url.sync="url" />-->
-    <!--       <el-single-upload :url.sync="url" accept=".mp4" />-->
+           <el-single-upload :url.sync="url" accept=".mp4" />
   </div>
 </template>
 
@@ -50,8 +50,8 @@ function upload(option) {
       if (Object.prototype.toString.call(res) !== "[object Object]") {
         res = { Key: file.name };
       }
-      res.url = `http://dummyimage.com/200x100/50B347/FFF&text=${res.Key}`;
-      // res.url = 'https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4'
+      // res.url = `http://dummyimage.com/200x100/50B347/FFF&text=${res.Key}`;
+      res.url = 'https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4'
       console.log("success", res);
       resolve({ data: res });
     };

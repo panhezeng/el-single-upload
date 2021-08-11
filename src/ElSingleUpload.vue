@@ -5,10 +5,16 @@
         class="check-can-play"
         v-if="
           (acceptClassName === 'video' || acceptClassName === 'audio') &&
-          !canPlay
+          canPlay < 1
         "
+        :style="canPlay===0?'cursor: pointer':''"
+        @click="reload()"
       >
-        <span>{{ checkPlayTxt }}</span>
+        <span>{{
+          canPlay === -1
+            ? "检测能否播放中..."
+            : "网络异常不能播放，点击这里重新加载"
+        }}</span>
       </div>
       <video
         ref="media"
@@ -31,7 +37,7 @@
           class="img"
           :src="urlInternal"
           v-if="acceptClassName === 'image'"
-        /><span style="display: inline-block; padding: 10px 15px;" v-else>{{
+        /><span style="display: inline-block; padding: 10px 15px" v-else>{{
           file ? file.name : urlInternal
         }}</span></a
       >
@@ -90,7 +96,7 @@ import { Progress, Upload, Input, Message } from "element-ui";
 import checkUpload from "@panhezeng/utils/dist/check-upload.js";
 import getObjectItemByPath from "@panhezeng/utils/dist/get-object-item-by-path.js";
 import ElPopoverDialog from "@panhezeng/el-popover-dialog";
-const checkPlayTxtInit = "检测能否播放中...";
+
 export default {
   name: "ElSingleUpload",
   components: {
@@ -195,8 +201,7 @@ export default {
       percentage: 100,
       emptyUrl: false,
       readonlyInternal: false,
-      canPlay: false,
-      checkPlayTxt: checkPlayTxtInit,
+      canPlay: -1,
       timeoutId: 0,
     };
   },
@@ -268,14 +273,19 @@ export default {
       this.$emit("media", null);
       this.$emit("update:url", this.urlInternal);
     },
+    reload(){
+      if (this.$refs.media) {
+        this.canPlay = -1;
+        this.$refs.media.load();
+      }
+    },
     emitMedia() {
       if (this.timeoutId) {
         window.clearTimeout(this.timeoutId);
         this.timeoutId = 0;
       }
-      this.canPlay = true;
+      this.canPlay = 1;
       if (this.$refs.media) {
-        this.checkPlayTxt = "";
         this.$emit("media-duration", this.$refs.media.duration);
         this.$emit("media", this.$refs.media);
         //                console.log(this.$refs.media.duration)
@@ -287,10 +297,8 @@ export default {
         this.timeoutId = 0;
       }
       // this.empty();
-      this.canPlay = false;
+      this.canPlay = 0;
       if (this.$refs.media) {
-        this.checkPlayTxt = "当前网络异常不能播放，请稍后再播";
-        // Message.error("当前网络异常不能播放，请稍后预览");
         this.$emit("media-load-error");
       }
     },
@@ -299,8 +307,7 @@ export default {
         this.acceptClassName === "video" ||
         this.acceptClassName === "audio"
       ) {
-        this.checkPlayTxt = checkPlayTxtInit;
-        this.canPlay = false;
+        this.canPlay = -1;
         this.$nextTick().then(() => {
           // 如果是媒体文件，则监听媒体数据加载完成事件
           if (this.$refs.media) {
@@ -440,7 +447,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    span{
+    span {
       padding: 10px;
     }
   }
