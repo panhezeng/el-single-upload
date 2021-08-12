@@ -230,18 +230,18 @@ export default {
   computed: {
     acceptClassName() {
       if (
-        /^\.(png|jpe?g|gif|svg|webp)/.test(this.accept) ||
-        /^image/.test(this.accept)
+        /^\.(png|jpe?g|gif|svg|webp)/i.test(this.accept) ||
+        /^image/i.test(this.accept)
       ) {
         return "image";
       } else if (
-        /^\.(ogg|mp3|wav|flac|aac)/.test(this.accept) ||
-        /^audio/.test(this.accept)
+        /^\.(ogg|mp3|wav|flac|aac)/i.test(this.accept) ||
+        /^audio/i.test(this.accept)
       ) {
         return "audio";
       } else if (
-        /^\.(mp4|webm)/.test(this.accept) ||
-        /^video/.test(this.accept)
+        /^\.(mp4|webm)/i.test(this.accept) ||
+        /^video/i.test(this.accept)
       ) {
         return "video";
       } else {
