@@ -1,21 +1,6 @@
 <template>
   <div class="el-single-upload" :class="{ [acceptClassName]: true, input }">
     <template class="view-box" v-if="view && urlInternal">
-      <div
-        class="check-can-play"
-        v-if="
-          (acceptClassName === 'video' || acceptClassName === 'audio') &&
-          canPlay < 1
-        "
-        :style="canPlay===0?'cursor: pointer':''"
-        @click="reload()"
-      >
-        <span>{{
-          canPlay === -1
-            ? "检测能否播放中..."
-            : "网络异常不能播放，点击这里重新加载"
-        }}</span>
-      </div>
       <video
         ref="media"
         class="view"
@@ -66,8 +51,11 @@
       :multiple="false"
       :show-file-list="false"
     >
-      <i class="re-upload-btn el-icon-upload" v-if="urlInternal"></i>
-      <i class="upload-btn el-icon-upload" v-else></i>
+      <i
+          :class="`el-icon-upload ${
+          urlInternal ? 're-upload-btn' : 'upload-btn'
+        }`"
+      ></i>
     </el-upload>
     <el-popover-dialog
       v-bind="$attrs"
@@ -201,7 +189,6 @@ export default {
       percentage: 100,
       emptyUrl: false,
       readonlyInternal: false,
-      canPlay: -1,
       timeoutId: 0,
     };
   },
@@ -255,7 +242,7 @@ export default {
       this.timeoutId = 0;
     }
     if (this.$refs.media) {
-      this.$refs.media.removeEventListener("canplay", this.emitMedia);
+      this.$refs.media.removeEventListener("loadedmetadata", this.emitMedia);
       this.$refs.media.removeEventListener("error", this.emitMediaError);
     }
   },
@@ -275,7 +262,6 @@ export default {
     },
     reload(){
       if (this.$refs.media) {
-        this.canPlay = -1;
         this.$refs.media.load();
       }
     },
@@ -284,7 +270,6 @@ export default {
         window.clearTimeout(this.timeoutId);
         this.timeoutId = 0;
       }
-      this.canPlay = 1;
       if (this.$refs.media) {
         this.$emit("media-duration", this.$refs.media.duration);
         this.$emit("media", this.$refs.media);
@@ -296,26 +281,23 @@ export default {
         window.clearTimeout(this.timeoutId);
         this.timeoutId = 0;
       }
-      // this.empty();
-      this.canPlay = 0;
       if (this.$refs.media) {
         this.$emit("media-load-error");
       }
     },
-    canplayHandler() {
+    loadedmetadataHandler() {
       if (
         this.acceptClassName === "video" ||
         this.acceptClassName === "audio"
       ) {
-        this.canPlay = -1;
         this.$nextTick().then(() => {
           // 如果是媒体文件，则监听媒体数据加载完成事件
           if (this.$refs.media) {
             this.$refs.media.addEventListener(
-              "canplay",
+              "loadedmetadata",
               this.emitMedia.bind(this)
             );
-            if (this.$refs.media.readyState > 2) {
+            if (this.$refs.media.readyState > 0) {
               this.emitMedia();
             }
             this.$refs.media.addEventListener(
@@ -334,7 +316,7 @@ export default {
         // 如果地址有效则赋值，否则重置为空
         if (/^https?:\/\//i.test(val)) {
           this.urlInternal = val;
-          this.canplayHandler();
+          this.loadedmetadataHandler();
         } else {
           this.empty(this.emptyUrl);
         }
