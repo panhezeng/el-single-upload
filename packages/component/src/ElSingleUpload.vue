@@ -1,32 +1,32 @@
 <template>
   <div class="el-single-upload" :class="{ [acceptClassName]: true, input }">
-    <template class="view-box" v-if="view && urlInternal">
+    <div v-if="view && urlInternal" class="view-box">
       <video
+        v-if="acceptClassName === 'video'"
         ref="media"
         class="view"
         controls
         preload="metadata"
         :src="urlInternal"
-        v-if="acceptClassName === 'video'"
       ></video>
       <audio
+        v-else-if="acceptClassName === 'audio'"
         ref="media"
         class="view"
         controls
         preload="metadata"
         :src="urlInternal"
-        v-else-if="acceptClassName === 'audio'"
       ></audio>
-      <a :href="urlInternal" target="_blank" class="view" v-else
+      <a v-else :href="urlInternal" target="_blank" class="view"
         ><img
+          v-if="acceptClassName === 'image'"
           class="img"
           :src="urlInternal"
-          v-if="acceptClassName === 'image'"
-        /><span style="display: inline-block; padding: 10px 15px" v-else>{{
+        /><span v-else style="display: inline-block; padding: 10px 15px">{{
           file ? file.name : urlInternal
         }}</span></a
       >
-    </template>
+    </div>
     <el-progress
       v-if="percentage !== 100"
       :percentage="percentage"
@@ -35,11 +35,11 @@
       :format="progressFormat"
     />
     <el-upload
+      v-if="!$attrs.disabled"
+      ref="upload"
       class="upload"
       :class="{ update: urlInternal }"
-      ref="upload"
       v-bind="$attrs"
-      v-if="!$attrs.disabled"
       action=""
       :before-upload="beforeUpload"
       :http-request="requestUpload"
@@ -51,21 +51,45 @@
       :multiple="false"
       :show-file-list="false"
     >
-      <i
-          :class="`el-icon-upload ${
+      <div
+        :class="`el-icon-upload ${
           urlInternal ? 're-upload-btn' : 'upload-btn'
         }`"
-      ></i>
+      >
+        <svg
+          viewBox="0 0 1024 1024"
+          xmlns="http://www.w3.org/2000/svg"
+          data-v-ba633cb8=""
+        >
+          <path
+            fill="currentColor"
+            d="M544 864V672h128L512 480 352 672h128v192H320v-1.6c-5.376.32-10.496 1.6-16 1.6A240 240 0 0 1 64 624c0-123.136 93.12-223.488 212.608-237.248A239.808 239.808 0 0 1 512 192a239.872 239.872 0 0 1 235.456 194.752c119.488 13.76 212.48 114.112 212.48 237.248a240 240 0 0 1-240 240c-5.376 0-10.56-1.28-16-1.6v1.6H544z"
+          ></path>
+        </svg>
+      </div>
     </el-upload>
-    <el-popover-dialog
+    <el-popconfirm
+      v-if="urlInternal && deleteButton && !$attrs.disabled"
+      title="您确认删除？"
       v-bind="$attrs"
-      class="icon-delete"
       :button-show="false"
       @confirm="deleteConfirm"
-      v-if="urlInternal && deleteButton && !$attrs.disabled"
     >
-      <i class="el-icon-delete" slot="reference"></i>
-    </el-popover-dialog>
+      <template #reference>
+        <div class="icon-delete">
+          <svg
+            viewBox="0 0 1024 1024"
+            xmlns="http://www.w3.org/2000/svg"
+            data-v-ba633cb8=""
+          >
+            <path
+              fill="currentColor"
+              d="M160 256H96a32 32 0 0 1 0-64h256V95.936a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32V192h256a32 32 0 1 1 0 64h-64v672a32 32 0 0 1-32 32H192a32 32 0 0 1-32-32V256zm448-64v-64H416v64h192zM224 896h576V256H224v640zm192-128a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32zm192 0a32 32 0 0 1-32-32V416a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32z"
+            ></path>
+          </svg>
+        </div>
+      </template>
+    </el-popconfirm>
     <el-input
       v-if="input"
       v-model="urlInternal"
@@ -73,25 +97,29 @@
       :disabled="$attrs.disabled"
       :readonly="readonlyInternal"
       @blur="setUrl(urlInternal)"
-      v-on="$listeners"
     />
-    <div class="tip" v-if="tip">{{ tip }}</div>
+    <div v-if="tip" class="tip">{{ tip }}</div>
     <slot />
   </div>
 </template>
 <script>
-import { Progress, Upload, Input, Message } from "element-ui";
+import {
+  ElProgress,
+  ElUpload,
+  ElInput,
+  ElPopconfirm,
+  ElMessage,
+} from "element-plus";
 import checkUpload from "@panhezeng/utils/dist/check-upload.js";
 import getObjectItemByPath from "@panhezeng/utils/dist/get-object-item-by-path.js";
-import ElPopoverDialog from "@panhezeng/el-popover-dialog";
 
 export default {
   name: "ElSingleUpload",
   components: {
-    "el-progress": Progress,
-    "el-upload": Upload,
-    "el-input": Input,
-    ElPopoverDialog,
+    ElProgress,
+    ElUpload,
+    ElInput,
+    ElPopconfirm,
   },
   inheritAttrs: false,
   props: {
@@ -111,9 +139,15 @@ export default {
       required: true,
     },
     // 上传前检查方法，第一个参数是上传文件数据，第二个参数是内部检查结果，方法必须返回布尔值，不是必须，默认走内部checkUpload逻辑
-    checkUpload: Function,
+    checkUpload: {
+      type: Function,
+      default: null,
+    },
     // 上传结果错误处理，不是必须，默认走内部错误逻辑
-    error: Function,
+    error: {
+      type: Function,
+      default: null,
+    },
     // 是否需要显示删除按钮
     deleteButton: {
       type: Boolean,
@@ -192,28 +226,6 @@ export default {
       timeoutId: 0,
     };
   },
-  watch: {
-    url: {
-      immediate: true,
-      handler(val) {
-        this.emptyUrl = true;
-        this.setUrl(val);
-        this.emptyUrl = this.errorUploadEmptyUrl;
-      },
-    },
-    errorUploadEmptyUrl: {
-      immediate: true,
-      handler(val) {
-        this.emptyUrl = val;
-      },
-    },
-    readonly: {
-      immediate: true,
-      handler(val) {
-        this.readonlyInternal = val;
-      },
-    },
-  },
   computed: {
     acceptClassName() {
       if (
@@ -236,7 +248,29 @@ export default {
       }
     },
   },
-  beforeDestroy() {
+  watch: {
+    url: {
+      immediate: true,
+      handler(val) {
+        this.emptyUrl = true;
+        this.setUrl(val);
+        this.emptyUrl = this.errorUploadEmptyUrl;
+      },
+    },
+    errorUploadEmptyUrl: {
+      immediate: true,
+      handler(val) {
+        this.emptyUrl = val;
+      },
+    },
+    readonly: {
+      immediate: true,
+      handler(val) {
+        this.readonlyInternal = val;
+      },
+    },
+  },
+  beforeUnmount() {
     if (this.timeoutId) {
       window.clearTimeout(this.timeoutId);
       this.timeoutId = 0;
@@ -260,7 +294,7 @@ export default {
       this.$emit("media", null);
       this.$emit("update:url", this.urlInternal);
     },
-    reload(){
+    reload() {
       if (this.$refs.media) {
         this.$refs.media.load();
       }
@@ -344,10 +378,10 @@ export default {
             this.imageDimensions.height
           ).then((result) => {
             if (result.validation) {
-              // Message.info("文件读取中...");
+              // ElMessage.info("文件读取中...");
               resolve();
             } else {
-              if (result.message) Message.error(result.message);
+              if (result.message) ElMessage.error(result.message);
               this.readonlyInternal = this.readonly;
               this.$emit("validation-error");
               reject();
@@ -361,7 +395,7 @@ export default {
       //        console.log('option.data', option.data)
       return this.upload(option);
     },
-    progressUpload(event, file) {
+    progressUpload(event) {
       this.$emit("progress-upload", event);
       //        console.log('event, file', event, file)
       let percentage = 0;
@@ -383,7 +417,7 @@ export default {
       if (this.error) {
         this.error(err, file);
       } else {
-        Message.error("上传失败");
+        ElMessage.error("上传失败");
       }
       this.empty(this.emptyUrl);
       this.$emit("error-upload", { err, file });
@@ -524,7 +558,8 @@ export default {
     font-size: 24px !important;
     color: #8c939d;
     background: #ffffff;
-
+    width: 30px;
+    height: 30px;
     &:hover {
       color: #20a0ff;
     }
@@ -541,14 +576,11 @@ export default {
     border-left: none;
     padding: 0 1px;
     line-height: 1;
-
+    width: 30px;
+    height: 30px;
     &:hover {
       border-color: #20a0ff;
       color: #20a0ff;
-    }
-
-    .el-icon-delete {
-      margin-left: 2px;
     }
   }
 
