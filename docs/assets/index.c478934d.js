@@ -1,40 +1,40 @@
 import {
   d as F,
-  r as k,
+  r as C,
   c as n,
-  a as B,
-  F as C,
+  a as k,
+  F as B,
   b as d,
-  e as p,
-  o,
+  e as c,
+  o as l,
   E as O,
-  f as j,
-  g as $,
+  f as M,
+  g as j,
   h as S,
-  i as A,
+  i as $,
   j as y,
-  k as M,
+  k as N,
   t as v,
-  l as c,
-  m,
-  w,
-  n as b,
+  l as u,
+  m as p,
+  w as b,
+  n as U,
   p as _,
-  q as N,
-  s as V,
-  u as P,
+  q as A,
+  s as L,
+  u as V,
 } from "./vendor.60a81573.js";
-const L = function () {
+const P = function () {
   const r = document.createElement("link").relList;
   if (r && r.supports && r.supports("modulepreload")) return;
-  for (const t of document.querySelectorAll('link[rel="modulepreload"]')) a(t);
+  for (const t of document.querySelectorAll('link[rel="modulepreload"]')) s(t);
   new MutationObserver((t) => {
     for (const i of t)
       if (i.type === "childList")
-        for (const u of i.addedNodes)
-          u.tagName === "LINK" && u.rel === "modulepreload" && a(u);
+        for (const o of i.addedNodes)
+          o.tagName === "LINK" && o.rel === "modulepreload" && s(o);
   }).observe(document, { childList: !0, subtree: !0 });
-  function s(t) {
+  function a(t) {
     const i = {};
     return (
       t.integrity && (i.integrity = t.integrity),
@@ -47,64 +47,63 @@ const L = function () {
       i
     );
   }
-  function a(t) {
+  function s(t) {
     if (t.ep) return;
     t.ep = !0;
-    const i = s(t);
+    const i = a(t);
     fetch(t.href, i);
   }
 };
-L();
+P();
 var q = (e, r) => {
-  const s = e.__vccOpts || e;
-  for (const [a, t] of r) s[a] = t;
-  return s;
+  const a = e.__vccOpts || e;
+  for (const [s, t] of r) a[s] = t;
+  return a;
 };
 const z = F({
     name: "App",
     components: {},
     setup() {
-      const e = k({ url: "" });
-      function r(s) {
-        const a = s.file;
-        if (Object.prototype.toString.call(a) !== "[object File]")
+      const e = C({ url: "" });
+      function r(a) {
+        const s = a.file;
+        if (Object.prototype.toString.call(s) !== "[object File]")
           throw new Error(
             "file\u53C2\u6570\u5FC5\u987B\u4E3AFile\u6570\u636E\u7C7B\u578B"
           );
-        return new Promise((t, i) => {
-          setTimeout((l) => {
-            Object.prototype.toString.call(l) !== "[object Object]" &&
-              (l = { Key: a.name }),
-              (l.url =
+        return new Promise((t) => {
+          setTimeout((o) => {
+            Object.prototype.toString.call(o) !== "[object Object]" &&
+              (o = { Key: s.name }),
+              (o.url =
                 "https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4"),
-              console.log("success", l),
-              t({ data: l });
+              t({ data: o });
           }, 300);
         });
       }
       return { data: e, upload: r };
     },
   }),
-  D = d(
+  T = d(
     "h1",
     null,
     "\u4E0A\u4F20\u7684mock\u6F14\u793A\uFF0Cresponse\u6C38\u8FDC\u662F\u4E00\u6837\u7684\u6570\u636E",
     -1
   );
-function H(e, r, s, a, t, i) {
-  const u = p("el-single-upload");
+function D(e, r, a, s, t, i) {
+  const o = c("el-single-upload");
   return (
-    o(),
+    l(),
     n(
-      C,
+      B,
       null,
       [
-        D,
-        B(
-          u,
+        T,
+        k(
+          o,
           {
             url: e.data.url,
-            "onUpdate:url": r[0] || (r[0] = (l) => (e.data.url = l)),
+            "onUpdate:url": r[0] || (r[0] = (m) => (e.data.url = m)),
             upload: e.upload,
           },
           null,
@@ -116,15 +115,15 @@ function H(e, r, s, a, t, i) {
     )
   );
 }
-var x = q(z, [["render", H]]);
-var T = (e, r) => {
-  const s = e.__vccOpts || e;
-  for (const [a, t] of r) s[a] = t;
-  return s;
+var H = q(z, [["render", D]]);
+var x = (e, r) => {
+  const a = e.__vccOpts || e;
+  for (const [s, t] of r) a[s] = t;
+  return a;
 };
 const K = {
     name: "ElSingleUpload",
-    components: { ElProgress: O, ElUpload: j, ElInput: $, ElPopconfirm: S },
+    components: { ElProgress: O, ElUpload: M, ElInput: j, ElPopconfirm: S },
     inheritAttrs: !1,
     props: {
       upload: { required: !0, type: Function },
@@ -169,6 +168,7 @@ const K = {
         emptyUrl: !1,
         readonlyInternal: !1,
         timeoutId: 0,
+        localMedia: { url: "", duration: 0, el: null },
       };
     },
     computed: {
@@ -227,39 +227,42 @@ const K = {
           this.$emit("media", null),
           this.$emit("update:url", this.urlInternal);
       },
-      reload() {
-        this.$refs.media && this.$refs.media.load();
-      },
-      emitMedia() {
+      clearUploadTimeout() {
         this.timeoutId &&
-          (window.clearTimeout(this.timeoutId), (this.timeoutId = 0)),
-          this.$refs.media &&
-            (this.$emit("media-duration", this.$refs.media.duration),
-            this.$emit("media", this.$refs.media));
+          (window.clearTimeout(this.timeoutId), (this.timeoutId = 0));
+      },
+      emitMedia(e = !1) {
+        this.clearUploadTimeout(),
+          e === !0
+            ? (this.$emit("media-duration", this.localMedia.duration),
+              this.$emit("media", this.localMedia.el))
+            : this.$refs.media &&
+              (this.$emit("media-duration", this.$refs.media.duration),
+              this.$emit("media", this.$refs.media));
       },
       emitMediaError() {
-        this.timeoutId &&
-          (window.clearTimeout(this.timeoutId), (this.timeoutId = 0)),
-          this.$refs.media && this.$emit("media-load-error");
+        this.clearUploadTimeout(), this.$emit("media-load-error");
       },
       loadedmetadataHandler() {
         (this.acceptClassName === "video" ||
           this.acceptClassName === "audio") &&
-          this.$nextTick().then(() => {
-            this.$refs.media &&
-              (this.$refs.media.addEventListener(
-                "loadedmetadata",
-                this.emitMedia.bind(this)
-              ),
-              this.$refs.media.readyState > 0 && this.emitMedia(),
-              this.$refs.media.addEventListener(
-                "error",
-                this.emitMediaError.bind(this)
-              ),
-              (this.timeoutId = window.setTimeout(() => {
-                this.emitMediaError();
-              }, 6e4)));
-          });
+          (this.localMedia.duration
+            ? this.emitMedia(!0)
+            : this.$nextTick().then(() => {
+                this.$refs.media &&
+                  (this.$refs.media.addEventListener("loadedmetadata", () =>
+                    this.emitMedia()
+                  ),
+                  this.$refs.media.readyState > 2 && this.emitMedia(),
+                  this.$refs.media.addEventListener(
+                    "error",
+                    this.emitMediaError.bind(this)
+                  ),
+                  this.clearUploadTimeout(),
+                  (this.timeoutId = window.setTimeout(() => {
+                    this.emitMediaError();
+                  }, 6e4)));
+              }));
       },
       setUrl(e) {
         Object.prototype.toString.call(e) === "[object String]" &&
@@ -277,20 +280,38 @@ const K = {
           this.$emit("before-upload", e),
           this.checkUpload
             ? this.checkUpload(e)
-            : new Promise((r, s) => {
-                A(
+            : new Promise((r, a) => {
+                $(
                   e,
                   this.accept,
                   this.size,
                   this.imageDimensions.width,
                   this.imageDimensions.height
-                ).then((a) => {
-                  a.validation
-                    ? r()
-                    : (a.message && y.error(a.message),
+                ).then((s) => {
+                  if (s.validation) {
+                    if (
+                      this.acceptClassName === "video" ||
+                      this.acceptClassName === "audio"
+                    ) {
+                      this.localMedia.url = URL.createObjectURL(e);
+                      const t = (this.localMedia.el = document.createElement(
+                        this.acceptClassName
+                      ));
+                      (t.preload = "metadata"),
+                        t.addEventListener("loadedmetadata", () => {
+                          this.localMedia.duration = t.duration;
+                        }),
+                        t.addEventListener("error", () => {
+                          this.localMedia.duration = 0;
+                        }),
+                        (t.src = this.localMedia.url);
+                    }
+                    r(!0);
+                  } else
+                    s.message && y.error(s.message),
                       (this.readonlyInternal = this.readonly),
                       this.$emit("validation-error"),
-                      s());
+                      a();
                 });
               })
         );
@@ -306,7 +327,7 @@ const K = {
           (this.percentage = Math.floor(r));
       },
       successUpload(e) {
-        this.setUrl(M(e, this.resPathOfUrl)),
+        this.setUrl(N(e, this.resPathOfUrl)),
           (this.percentage = 100),
           this.$emit("success-upload", e),
           this.finishUpload();
@@ -333,10 +354,10 @@ const K = {
       },
     },
   },
-  G = { key: 0, class: "view-box" },
+  R = { key: 0, class: "view-box" },
+  G = ["src"],
   J = ["src"],
-  Q = ["src"],
-  R = ["href"],
+  Q = ["href"],
   W = ["src"],
   X = { key: 1, style: { display: "inline-block", padding: "10px 15px" } },
   Y = d(
@@ -377,27 +398,27 @@ const K = {
     -1
   ),
   te = { key: 5, class: "tip" };
-function re(e, r, s, a, t, i) {
-  const u = p("el-progress"),
-    l = p("el-upload"),
-    E = p("el-popconfirm"),
-    I = p("el-input");
+function re(e, r, a, s, t, i) {
+  const o = c("el-progress"),
+    m = c("el-upload"),
+    E = c("el-popconfirm"),
+    I = c("el-input");
   return (
-    o(),
+    l(),
     n(
       "div",
       {
-        class: b([
+        class: U([
           "el-single-upload",
-          { [i.acceptClassName]: !0, input: s.input },
+          { [i.acceptClassName]: !0, input: a.input },
         ]),
       },
       [
-        s.view && t.urlInternal
-          ? (o(),
-            n("div", G, [
+        a.view && t.urlInternal
+          ? (l(),
+            n("div", R, [
               i.acceptClassName === "video"
-                ? (o(),
+                ? (l(),
                   n(
                     "video",
                     {
@@ -410,10 +431,10 @@ function re(e, r, s, a, t, i) {
                     },
                     null,
                     8,
-                    J
+                    G
                   ))
                 : i.acceptClassName === "audio"
-                ? (o(),
+                ? (l(),
                   n(
                     "audio",
                     {
@@ -426,9 +447,9 @@ function re(e, r, s, a, t, i) {
                     },
                     null,
                     8,
-                    Q
+                    J
                   ))
-                : (o(),
+                : (l(),
                   n(
                     "a",
                     {
@@ -439,7 +460,7 @@ function re(e, r, s, a, t, i) {
                     },
                     [
                       i.acceptClassName === "image"
-                        ? (o(),
+                        ? (l(),
                           n(
                             "img",
                             { key: 0, class: "img", src: t.urlInternal },
@@ -447,7 +468,7 @@ function re(e, r, s, a, t, i) {
                             8,
                             W
                           ))
-                        : (o(),
+                        : (l(),
                           n(
                             "span",
                             X,
@@ -456,14 +477,14 @@ function re(e, r, s, a, t, i) {
                           )),
                     ],
                     8,
-                    R
+                    Q
                   )),
             ]))
-          : c("", !0),
+          : u("", !0),
         t.percentage !== 100
-          ? (o(),
-            m(
-              u,
+          ? (l(),
+            p(
+              o,
               {
                 key: 1,
                 percentage: t.percentage,
@@ -475,12 +496,12 @@ function re(e, r, s, a, t, i) {
               8,
               ["percentage", "format"]
             ))
-          : c("", !0),
+          : u("", !0),
         e.$attrs.disabled
-          ? c("", !0)
-          : (o(),
-            m(
-              l,
+          ? u("", !0)
+          : (l(),
+            p(
+              m,
               _(
                 {
                   key: 2,
@@ -495,18 +516,18 @@ function re(e, r, s, a, t, i) {
                   "on-progress": i.progressUpload,
                   "on-success": i.successUpload,
                   "on-error": i.errorUpload,
-                  accept: s.accept,
-                  drag: s.drag,
+                  accept: a.accept,
+                  drag: a.drag,
                   multiple: !1,
                   "show-file-list": !1,
                 }
               ),
               {
-                default: w(() => [
+                default: b(() => [
                   d(
                     "div",
                     {
-                      class: b(
+                      class: U(
                         `el-icon-upload ${
                           t.urlInternal ? "re-upload-btn" : "upload-btn"
                         }`
@@ -530,23 +551,23 @@ function re(e, r, s, a, t, i) {
                 "drag",
               ]
             )),
-        t.urlInternal && s.deleteButton && !e.$attrs.disabled
-          ? (o(),
-            m(
+        t.urlInternal && a.deleteButton && !e.$attrs.disabled
+          ? (l(),
+            p(
               E,
               _(
                 { key: 3, title: "\u60A8\u786E\u8BA4\u5220\u9664\uFF1F" },
                 e.$attrs,
                 { "button-show": !1, onConfirm: i.deleteConfirm }
               ),
-              { reference: w(() => [ee]), _: 1 },
+              { reference: b(() => [ee]), _: 1 },
               16,
               ["onConfirm"]
             ))
-          : c("", !0),
-        s.input
-          ? (o(),
-            m(
+          : u("", !0),
+        a.input
+          ? (l(),
+            p(
               I,
               {
                 key: 4,
@@ -564,16 +585,16 @@ function re(e, r, s, a, t, i) {
               8,
               ["modelValue", "placeholder", "disabled", "readonly"]
             ))
-          : c("", !0),
-        s.tip ? (o(), n("div", te, v(s.tip), 1)) : c("", !0),
-        N(e.$slots, "default"),
+          : u("", !0),
+        a.tip ? (l(), n("div", te, v(a.tip), 1)) : u("", !0),
+        A(e.$slots, "default"),
       ],
       2
     )
   );
 }
-var h = T(K, [["render", re]]);
-const U = Object.assign(h, {
+var h = x(K, [["render", re]]);
+const w = Object.assign(h, {
   install: (
     e,
     r = typeof window != "undefined" &&
@@ -582,10 +603,10 @@ const U = Object.assign(h, {
       ? window.ElSingleUploadOptions
       : {}
   ) => {
-    Object.assign(U.props, r), e.component(h.name, h);
+    Object.assign(w.props, r), e.component(h.name, h);
   },
 });
-const f = V(x);
-f.use(P);
-f.use(U);
+const f = L(H);
+f.use(V);
+f.use(w);
 f.mount("#app");

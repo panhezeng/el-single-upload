@@ -224,6 +224,11 @@ export default {
       emptyUrl: false,
       readonlyInternal: false,
       timeoutId: 0,
+      localMedia: {
+        url: "",
+        duration: 0,
+        el: null,
+      },
     };
   },
   computed: {
@@ -294,55 +299,62 @@ export default {
       this.$emit("media", null);
       this.$emit("update:url", this.urlInternal);
     },
-    reload() {
-      if (this.$refs.media) {
-        this.$refs.media.load();
-      }
-    },
-    emitMedia() {
+    // reload() {
+    //   if (this.$refs.media) {
+    //     this.$refs.media.load();
+    //   }
+    // },
+    clearUploadTimeout() {
       if (this.timeoutId) {
         window.clearTimeout(this.timeoutId);
         this.timeoutId = 0;
       }
-      if (this.$refs.media) {
+    },
+    emitMedia(local = false) {
+      this.clearUploadTimeout();
+      if (local === true) {
+        this.$emit("media-duration", this.localMedia.duration);
+        this.$emit("media", this.localMedia.el);
+      } else if (this.$refs.media) {
         this.$emit("media-duration", this.$refs.media.duration);
         this.$emit("media", this.$refs.media);
-        //                console.log(this.$refs.media.duration)
       }
     },
     emitMediaError() {
-      if (this.timeoutId) {
-        window.clearTimeout(this.timeoutId);
-        this.timeoutId = 0;
-      }
-      if (this.$refs.media) {
-        this.$emit("media-load-error");
-      }
+      this.clearUploadTimeout();
+      // this.empty();
+      // if (this.$refs.media) {
+      this.$emit("media-load-error");
+      // }
     },
     loadedmetadataHandler() {
       if (
         this.acceptClassName === "video" ||
         this.acceptClassName === "audio"
       ) {
-        this.$nextTick().then(() => {
-          // 如果是媒体文件，则监听媒体数据加载完成事件
-          if (this.$refs.media) {
-            this.$refs.media.addEventListener(
-              "loadedmetadata",
-              this.emitMedia.bind(this)
-            );
-            if (this.$refs.media.readyState > 0) {
-              this.emitMedia();
+        if (this.localMedia.duration) {
+          this.emitMedia(true);
+        } else {
+          this.$nextTick().then(() => {
+            // 如果是媒体文件，则监听媒体数据加载完成事件
+            if (this.$refs.media) {
+              this.$refs.media.addEventListener("loadedmetadata", () =>
+                this.emitMedia()
+              );
+              if (this.$refs.media.readyState > 2) {
+                this.emitMedia();
+              }
+              this.$refs.media.addEventListener(
+                "error",
+                this.emitMediaError.bind(this)
+              );
+              this.clearUploadTimeout();
+              this.timeoutId = window.setTimeout(() => {
+                this.emitMediaError();
+              }, 60000);
             }
-            this.$refs.media.addEventListener(
-              "error",
-              this.emitMediaError.bind(this)
-            );
-            this.timeoutId = window.setTimeout(() => {
-              this.emitMediaError();
-            }, 60000);
-          }
-        });
+          });
+        }
       }
     },
     setUrl(val) {
@@ -378,8 +390,24 @@ export default {
             this.imageDimensions.height
           ).then((result) => {
             if (result.validation) {
+              if (
+                this.acceptClassName === "video" ||
+                this.acceptClassName === "audio"
+              ) {
+                this.localMedia.url = URL.createObjectURL(file);
+                const mediaElement = (this.localMedia.el =
+                  document.createElement(this.acceptClassName));
+                mediaElement.preload = "metadata";
+                mediaElement.addEventListener("loadedmetadata", () => {
+                  this.localMedia.duration = mediaElement.duration;
+                });
+                mediaElement.addEventListener("error", () => {
+                  this.localMedia.duration = 0;
+                });
+                mediaElement.src = this.localMedia.url;
+              }
               // ElMessage.info("文件读取中...");
-              resolve();
+              resolve(true);
             } else {
               if (result.message) ElMessage.error(result.message);
               this.readonlyInternal = this.readonly;
