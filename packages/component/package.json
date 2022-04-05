@@ -27,8 +27,7 @@
     "package.json",
     "README"
   ],
-  "main": "",
-  "browser": "dist/el-single-upload.es.js",
+  "main": "dist/el-single-upload.es.js",
   "bin": {},
   "repository": {
     "type": "git",
